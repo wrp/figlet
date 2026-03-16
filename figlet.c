@@ -848,28 +848,23 @@ void clearcfilelist()
 }
 
 
-/****************************************************************************
-
-  getparams
-
-  Handles all command-line parameters.  Puts all parameters within
-  bounds.
-
-****************************************************************************/
-
-void getparams()
+/*
+ * Handle command-line arguments
+ */
+static void
+getparams(int argc, char **argv)
 {
   extern char *optarg;
   extern int optind;
-  int c; /* "Should" be a char -- need int for "!= -1" test*/
+  int c;
   int columns,infoprint;
   char *controlname,*env;
 
-  if ((myname = strrchr(Myargv[0],DIRSEP))!=NULL) {
+  if ((myname = strrchr(argv[0],DIRSEP))!=NULL) {
     myname++;
     }
   else {
-    myname = Myargv[0];
+    myname = argv[0];
     }
   fontdirname = DEFAULTFONTDIR;
   env = getenv("FIGLET_FONTDIR");
@@ -891,7 +886,7 @@ void getparams()
   outputwidth = DEFAULTCOLUMNS;
   gn[1] = 0x80;
   gr = 1;
-  while ((c = getopt(Myargc,Myargv,"ADEXLRI:xlcrpntvm:w:d:f:C:NFskSWo"))!= -1) {
+  while ((c = getopt(argc,argv,"ADEXLRI:xlcrpntvm:w:d:f:C:NFskSWo"))!= -1) {
       /* Note: -F is not a legal option -- prints a special err message.  */
     switch (c) {
       case 'A':
@@ -1036,7 +1031,7 @@ void getparams()
         exit(1);
       }
     }
-  if (optind!=Myargc) cmdinput = 1; /* force cmdinput if more arguments */
+  if (optind!=argc) cmdinput = 1; /* force cmdinput if more arguments */
   outlinelenlimit = outputwidth-1;
   if (infoprint>=0) {
     printinfo(infoprint);
@@ -1955,7 +1950,7 @@ main(int argc, char **argv)
 
 	Myargc = argc;
 	Myargv = argv;
-  getparams();
+	getparams(argc, argv);
   readcontrolfiles();
   readfont();
   linealloc();
