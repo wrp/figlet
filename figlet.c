@@ -341,37 +341,29 @@ ZFILE *fp;
 }
 
 
-/****************************************************************************
-
-  usageerr
-
-  Prints "Usage: ...." line to the given stream.
-
-****************************************************************************/
-
-void printusage(out)
-FILE *out;
+/*
+ * Print "Usage: ...." line
+ */
+void
+printusage(const char *name)
 {
-  fprintf(out,
-    "Usage: %s [ -cklnoprstvxDELNRSWX ] [ -d fontdirectory ]\n",
-    "TODO--ADD NAME");
-  fprintf(out,
+	const char *basename = strrchr(name, DIRSEP);
+	name = basename ? basename + 1 : name;
+
+	printf("Usage: %s ", name);
+	printf("[ -cklnoprstvxDELNRSWX ] [ -d fontdirectory ]\n"),
+	printf(
     "              [ -f fontfile ] [ -m smushmode ] [ -w outputwidth ]\n");
-  fprintf(out,
+	printf(
     "              [ -C controlfile ] [ -I infocode ] [ message ]\n");
 }
 
 
-/****************************************************************************
-
-  printinfo
-
-  Prints version and copyright message, or utility information.
-
-****************************************************************************/
-
-void printinfo(infonum)
-int infonum;
+/*
+ * Print version and copyright message, or utility information.
+ */
+void
+printinfo(int infonum, const char *name)
 {
   switch (infonum) {
     case 0: /* Copyright message */
@@ -386,7 +378,7 @@ int infonum;
       printf(" e-mail message to <info@figlet.org>.\n\n");
       printf("The latest version of FIGlet is available from the");
       printf(" web site,\n\thttp://www.figlet.org/\n\n");
-      printusage(stdout);
+      printusage(name);
       break;
     case 1: /* Version (integer) */
       printf("%d\n",VERSION_INT);
@@ -1000,7 +992,7 @@ getparams(int argc, char **argv)
   if (optind!=argc) cmdinput = 1; /* force cmdinput if more arguments */
   outlinelenlimit = outputwidth-1;
   if (infoprint>=0) {
-    printinfo(infoprint);
+    printinfo(infoprint, argv[0]);
     exit(0);
     }
 }
