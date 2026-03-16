@@ -845,8 +845,6 @@ void clearcfilelist()
 static void
 getparams(int argc, char **argv)
 {
-  extern char *optarg;
-  extern int optind;
   int c;
   int columns,infoprint;
   char *controlname,*env;
