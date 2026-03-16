@@ -115,12 +115,12 @@
 #endif
 
 
-/* 
+/*
  * Buffer size macros
  *
  * The following constants are optimized for large-model
- * (but not flat model) Windows with virtual memory.  It 
- * will work fine on unix and flat model Windows as well.  
+ * (but not flat model) Windows with virtual memory.  It
+ * will work fine on unix and flat model Windows as well.
  *
  * The constant BUFFERTHRESHOLD determines when memory
  * buffering changes to file buffering.

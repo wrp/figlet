@@ -28,12 +28,12 @@
 /* Control files by Glenn Chappell Feb 1994 */
 /* Release 2.1 12 Aug 1994 */
 /* Release 2.1.1 25 Aug 1994 */
-/* Release 2.1.2 by Gilbert (Mad Programmer) Healton: Add -A command line 
+/* Release 2.1.2 by Gilbert (Mad Programmer) Healton: Add -A command line
    option.  Sept 8, 1996 */
 /* Release 2.2 by John Cowan: multibyte inputs, compressed fonts,
    mapping tables, kerning/smushing options. */
 /* Release 2.2.1 by Christiaan Keet: minor updates including readmes
-   FAQs and comments. 13 July 2002. The new official FIGlet website is 
+   FAQs and comments. 13 July 2002. The new official FIGlet website is
    http://www.figlet.org/  */
 /* Release 2.2.2 by Christiaan Keet: License changed from "Artistic License"
    to "Academic Free License" as agreed by FIGlet authors. 05 July 2005 */
@@ -340,7 +340,7 @@ char *s2;
     }
   return 1;
 }
-   
+
 /****************************************************************************
 
   skiptoeol
@@ -485,7 +485,7 @@ char *magic;
     }
   magic[4] = 0;
   }
-  
+
 /****************************************************************************
 
   skipws
@@ -555,7 +555,7 @@ inchr *nump;
     acc = acc*base+(p-digits);
     }
   *nump = acc * sign;
-  }  
+  }
 
 /****************************************************************************
 
@@ -1295,7 +1295,7 @@ void readfont()
 
 void linealloc()
 {
-  int row; 
+  int row;
 
   outputline = (outchr**)myalloc(sizeof(outchr*)*charheight);
   for (row=0;row<charheight;row++) {
@@ -1385,7 +1385,7 @@ outchr lch,rch;
     return rch;
       /* Occurs in the absence of above exceptions. */
     }
-  
+
   if (smushmode & SM_HARDBLANK) {
     if (lch==hardblank && rch==hardblank) return lch;
     }
@@ -1909,7 +1909,7 @@ inchr c;
     "~~" is a tilde, "~x" for all other x is ignored).
   If multibyte = 4, Shift-JIS mode (0x80-0x9F and 0xE0-0xEF are first byte
     of a double-byte character, all other bytes are characters).
- 
+
 
 *****************************************************************************/
 

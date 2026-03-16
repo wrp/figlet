@@ -1,6 +1,6 @@
 # Turbo C makefile for figlet
-# adapted from Makefile for figlet version 2.3.0 (11 Jan 2011) 
-# adapted from Makefile for figlet version 2.2.2 (05 July 2005) 
+# adapted from Makefile for figlet version 2.3.0 (11 Jan 2011)
+# adapted from Makefile for figlet version 2.2.2 (05 July 2005)
 # adapted from Makefile for figlet version 2.2 (15 Oct 1996)
 # Copyright 1993, 1994,1995 Glenn Chappell and Ian Chai
 # Copyright 1996, 1997, 1998, 1999, 2000, 2001 John Cowan

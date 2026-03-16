@@ -84,16 +84,16 @@ These changes were made by Claudio Matsuoka <cmatsuoka@gmail.com>
 Changes in FIGlet 2.2.2
 -----------------------
 
-License changed from "Artistic License" to "Academic Free 
-License" as agreed by FIGlet authors. 05 July 2005 
+License changed from "Artistic License" to "Academic Free
+License" as agreed by FIGlet authors. 05 July 2005
 
 Changes in FIGlet 2.2.1
 -----------------------
 
 FIGlet 2.2.1 is a minor revision of FIGlet 2.2.  The files
-README, Makefile, figfont.txt, figlet.c and figlet.6 have been 
-changed to reflect changes in documentation, official contact 
-details etc. FTP-NOTE merged into README. FAQ and CHANGES 
+README, Makefile, figfont.txt, figlet.c and figlet.6 have been
+changed to reflect changes in documentation, official contact
+details etc. FTP-NOTE merged into README. FAQ and CHANGES
 added to the distribution.
 
 All other files are identical with the 2.2 release.

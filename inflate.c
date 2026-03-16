@@ -34,7 +34,7 @@
 
 /*
  * inflate.c is based on the public-domain (non-copyrighted) version
- * written by Mark Adler, version c14o, 23 August 1994.  It has been 
+ * written by Mark Adler, version c14o, 23 August 1994.  It has been
  * modified to be reentrant, more portable, and to be data driven.
  */
 
@@ -865,7 +865,7 @@ static int inflate_stored_setup(
   /* restore the state from the locals */
   is->bb = b;              /* restore bit buffer */
   is->bk = k;              /* restore bit count */
-  
+
   return 0;
 }
 
@@ -1152,7 +1152,7 @@ int InflatePutBuffer(                         /* returns 0 on success       */
   do
   {
     int size, i;
-    
+
 
     if ((is->state == -1) && (is->lastblock)) break;
 
@@ -1209,7 +1209,7 @@ int InflatePutBuffer(                         /* returns 0 on success       */
       }
       CATCH_BEGIN
       CATCH_END
-        
+
       /* restore the state from the locals */
       is->bb = b;              /* restore bit buffer */
       is->bk = k;              /* restore bit count */
@@ -1241,7 +1241,7 @@ int InflatePutBuffer(                         /* returns 0 on success       */
       int ret;
 
       ret = inflate_dynamic_setup(is);
-      
+
       if (ret > 0)
         ERROREXIT(is);
 
@@ -1285,7 +1285,7 @@ int InflatePutBuffer(                         /* returns 0 on success       */
     }
   }
   while (length || (is->state != beginstate));
-  
+
   FLUSHWINDOW(is->wp, TRUE);
 
   return is->errorencountered;

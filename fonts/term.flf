@@ -11,7 +11,7 @@ Double-checked by Paul Burton <solution@earthlink.net> 12/96.  Added the new
 parameter supported by FIGlet and FIGWin.  Unlike all other FIGfonts, this one
 is intended to produce output exactly the same as the input unless a control
 file is used.  Therefore it produces the SAME output for smush, kern or fit.
-  
+
 @
 !@
 "@
