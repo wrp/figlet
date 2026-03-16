@@ -871,8 +871,7 @@ getparams(int argc, char **argv)
   outputwidth = DEFAULTCOLUMNS;
   gn[1] = 0x80;
   gr = 1;
-  while ((c = getopt(argc,argv,"ADEXLRI:xlcrpntvm:w:d:f:C:NFskSWo"))!= -1) {
-      /* Note: -F is not a legal option -- prints a special err message.  */
+  while ((c = getopt(argc,argv,"ADEXLRI:xlcrpntvm:w:d:f:C:NskSWo"))!= -1) {
     switch (c) {
       case 'A':
         cmdinput = 1;
@@ -995,18 +994,6 @@ getparams(int argc, char **argv)
         gndbl[0] = gndbl[1] = gndbl[2] = gndbl[3] = 0;
         gl = 0;
         gr = 1;
-        break;
-      case 'F': /* Not a legal option */
-        fprintf(stderr,"illegal option -- F\n");
-        fprintf(stderr,"\nBecause of numerous incompatibilities, the");
-        fprintf(stderr," \"-F\" option has been\n");
-        fprintf(stderr,"removed.  It has been replaced by the \"figlist\"");
-        fprintf(stderr," program, which is now\n");
-        fprintf(stderr,"included in the basic FIGlet package.  \"figlist\"");
-        fprintf(stderr," is also available\n");
-        fprintf(stderr,"from  http://www.figlet.org/");
-        fprintf(stderr,"under UNIX utilities.\n");
-        exit(1);
         break;
       default:
         exit(1);
