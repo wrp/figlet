@@ -202,15 +202,6 @@ char hardblank;
 int charheight;
 
 
-/****************************************************************************
-
-  Name of program, used in error messages
-
-****************************************************************************/
-
-char *myname;
-
-
 #ifdef TIOCGWINSZ
 /****************************************************************************
 
@@ -363,7 +354,7 @@ FILE *out;
 {
   fprintf(out,
     "Usage: %s [ -cklnoprstvxDELNRSWX ] [ -d fontdirectory ]\n",
-    myname);
+    "TODO--ADD NAME");
   fprintf(out,
     "              [ -f fontfile ] [ -m smushmode ] [ -w outputwidth ]\n");
   fprintf(out,
@@ -860,12 +851,6 @@ getparams(int argc, char **argv)
   int columns,infoprint;
   char *controlname,*env;
 
-  if ((myname = strrchr(argv[0],DIRSEP))!=NULL) {
-    myname++;
-    }
-  else {
-    myname = argv[0];
-    }
   fontdirname = DEFAULTFONTDIR;
   env = getenv("FIGLET_FONTDIR");
   if (env!=NULL) {
@@ -951,9 +936,7 @@ getparams(int argc, char **argv)
           outputwidth = columns;
           }
 #else /* ifdef TIOCGWINSZ */
-        fprintf(stderr,
-          "%s: \"-t\" is disabled, since ioctl is not fully implemented.\n",
-          myname);
+        fprintf(stderr, "'-t' disabled; ioctl is not fully implemented.\n");
 #endif /* ifdef TIOCGWINSZ */
         break;
       case 'v':
@@ -1014,7 +997,7 @@ getparams(int argc, char **argv)
         gr = 1;
         break;
       case 'F': /* Not a legal option */
-        fprintf(stderr,"%s: illegal option -- F\n",myname);
+        fprintf(stderr,"illegal option -- F\n");
         printusage(stderr);
         fprintf(stderr,"\nBecause of numerous incompatibilities, the");
         fprintf(stderr," \"-F\" option has been\n");
@@ -1156,7 +1139,7 @@ readfont(void)
     &ffright2left,&smush2);
 
   if (maxlen > MAXLEN) {
-    fprintf(stderr,"%s: %s: character is too wide\n",myname,fontname);
+    fprintf(stderr,"%s: character is too wide\n", fontname);
     exit(1);
     }
 #ifdef TLF_FONTS
@@ -1165,7 +1148,7 @@ readfont(void)
 #else
   if (strcmp(magicnum,FONTFILEMAGICNUMBER) || numsread<5) {
 #endif
-    fprintf(stderr,"%s: %s: Not a FIGlet 2 font file\n",myname,fontname);
+    fprintf(stderr,"%s: Not a FIGlet 2 font file\n", fontname);
     exit(1);
     }
   for (i=1;i<=cmtlines;i++) {
