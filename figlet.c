@@ -134,8 +134,8 @@ inchr gn[4]; /* Gn character sets: ASCII, Latin-1, none, none */
 int gl; /* 0-3 specifies left-half Gn character set */
 int gr; /* 0-3 specifies right-half Gn character set */
 
-int Myargc;  /* to avoid passing around argc and argv */
-char **Myargv;
+static int Myargc;  /* to avoid passing around argc and argv */
+static char **Myargv;
 
 /****************************************************************************
 
@@ -2000,8 +2000,8 @@ main(int argc, char **argv)
 	int wordbreakmode;  /* (1) */
 	int char_not_added;
 
-  Myargc = argc;
-  Myargv = argv;
+	Myargc = argc;
+	Myargv = argv;
   getparams();
   readcontrolfiles();
   readfont();
