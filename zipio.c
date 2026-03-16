@@ -73,6 +73,7 @@
  * in the pkzip 1.93 distribution.
  */
 
+#include <errno.h>
 #include <stdlib.h>
 #ifdef MEMCPY
 #include <mem.h>
@@ -559,7 +560,8 @@ static void inflate_free(void *buffer)
   free(buffer);
 }
 
-ZFILE *Zopen(const char *path, const char *mode)
+ZFILE *
+Zopen(const char *path, const char *mode)
 {
   struct ZipioState *zs;
 
@@ -588,7 +590,9 @@ ZFILE *Zopen(const char *path, const char *mode)
   zs->OpenFile = fopen(path, mode);
   if (!zs->OpenFile)
   {
-    free(zs);
+	int save_errno = errno;
+	free(zs);
+	errno = save_errno;
     return NULL;
   }
 
