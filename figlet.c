@@ -57,6 +57,7 @@
 #define DEFAULTFONTFILE "standard.flf"
 #endif
 
+#include <errno.h>
 #include <stdio.h>
 #ifdef __STDC__
 #include <stdlib.h>
@@ -1185,10 +1186,15 @@ readfont(void)
     }
 #endif
 
-  if (fontfile==NULL) {
-    fprintf(stderr,"%s: %s: Unable to open font file\n",myname,fontname);
-    exit(1);
-    }
+	if (fontfile == NULL) {
+		fprintf(
+			stderr,
+			"Error opening fontfile '%s': %s\n",
+			fontname,
+			strerror(errno)
+		);
+		exit(1);
+	}
 
   readmagic(fontfile,magicnum);
   if (myfgets(fileline,MAXLEN,fontfile)==NULL) {
