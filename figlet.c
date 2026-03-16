@@ -236,34 +236,18 @@ int get_columns()
 #endif /* ifdef TIOCGWINSZ */
 
 
-/****************************************************************************
-
-  myalloc
-
-  Calls malloc.  If malloc returns error, prints error message and
-  quits.
-
-****************************************************************************/
-
-#ifdef __STDC__
-char *myalloc(size_t size)
-#else
-char *myalloc(size)
-int size;
-#endif
+/*
+ * Call malloc.  Exit on failure.
+ */
+static void *
+myalloc(size_t size)
 {
-  char *ptr;
-#ifndef __STDC__
-  extern void *malloc();
-#endif
-
-  if ((ptr = (char*)malloc(size))==NULL) {
-    fprintf(stderr,"%s: Out of memory\n",myname);
-    exit(1);
-    }
-  else {
-    return ptr;
-    }
+	void *ptr;
+	if ( (ptr = malloc(size)) == NULL) {
+		perror("malloc");
+		exit(1);
+	}
+	return ptr;
 }
 
 
