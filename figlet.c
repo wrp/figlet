@@ -16,40 +16,7 @@
 #define VERSION_INT 20205
 
 /* FIGlet (Frank, Ian & Glenn's Letters) */
-/* by Glenn Chappell */
-/* Apr 1991 */
-/* Automatic file addition by Ian Chai May 1991 */
-/* Punctuation and numbers addition by Ian Chai Jan 1993 */
-/* Full ASCII by Glenn Chappell Feb 1993 */
-/* Line-breaking, general rewrite by Glenn Chappell Mar 1993 */
-/* Hard blanks by Glenn Chappell Apr 1993 */
-/* Release 2.0 5 Aug 1993 */
-/* Right-to-left printing, extended char set by Glenn Chappell Dec 1993 */
-/* Control files by Glenn Chappell Feb 1994 */
-/* Release 2.1 12 Aug 1994 */
-/* Release 2.1.1 25 Aug 1994 */
-/* Release 2.1.2 by Gilbert (Mad Programmer) Healton: Add -A command line
-   option.  Sept 8, 1996 */
-/* Release 2.2 by John Cowan: multibyte inputs, compressed fonts,
-   mapping tables, kerning/smushing options. */
-/* Release 2.2.1 by Christiaan Keet: minor updates including readmes
-   FAQs and comments. 13 July 2002. The new official FIGlet website is
-   http://www.figlet.org/  */
-/* Release 2.2.2 by Christiaan Keet: License changed from "Artistic License"
-   to "Academic Free License" as agreed by FIGlet authors. 05 July 2005 */
-/* Release 2.2.3 by Claudio Matsuoka, 12 Jan 2011: BSD license, fixes */
-/* Release 2.2.4 by Claudio Matsuoka, 26 Jan 2011: tlf2 font support */
-/* Release 2.2.5 by Claudio Matsuoka, 31 May 2012: flc licensing, minor fixes */
 
-/*---------------------------------------------------------------------------
-  DEFAULTFONTDIR and DEFAULTFONTFILE should be defined in the Makefile.
-  DEFAULTFONTDIR is the full path name of the directory in which FIGlet
-    will search first for fonts (the ".flf" files).
-  DEFAULTFONTFILE is the filename of the font to be used if no other
-    is specified (standard.flf is recommended, but any other can be
-    used). This file should reside in the directory specified by
-    DEFAULTFONTDIR.
----------------------------------------------------------------------------*/
 #ifndef DEFAULTFONTDIR
 #define DEFAULTFONTDIR "fonts"
 #endif
