@@ -1169,16 +1169,12 @@ inchr theord;
 }
 
 
-/****************************************************************************
-
-  readfont
-
-  Allocates memory, initializes variables, and reads in the font.
-  Called near beginning of main().
-
-****************************************************************************/
-
-void readfont()
+/*
+ * Allocate memory, initialize variables, and read in the font.
+ * Called near beginning of main().
+ */
+void
+readfont(void)
 {
   int i,row,numsread;
   inchr theord;
