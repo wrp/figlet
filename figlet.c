@@ -692,11 +692,13 @@ char *controlname;
 
   controlfile = FIGopen(controlname,CONTROLFILESUFFIX);
 
-  if (controlfile==NULL) {
-    fprintf(stderr,"%s: %s: Unable to open control file\n",myname,
-      controlname);
-    exit(1);
-    }
+	if (controlfile == NULL) {
+		fprintf(
+			stderr, "Unable to open control file '%s': %s\n",
+			controlname, strerror(errno)
+		);
+		exit(1);
+	}
 
   (*commandlistend) = (comnode*)myalloc(sizeof(comnode));
   (*commandlistend)->thecommand = 0; /* Begin with a freeze command */
