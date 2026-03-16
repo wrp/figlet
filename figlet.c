@@ -2000,9 +2000,8 @@ inchr getinchr()
 
 ****************************************************************************/
 
-int main(argc,argv)
-int argc;
-char *argv[];
+int
+main(int argc, char **argv)
 {
   inchr c,c2;
   int i;
