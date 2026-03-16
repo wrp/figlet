@@ -684,18 +684,12 @@ ZFILE *controlfile;
   return;
   }
 
-/****************************************************************************
-
-  FIGopen
-
-  Given a FIGlet font or control file name and suffix, return the file
-  or NULL if not found
-
-****************************************************************************/
-
-ZFILE *FIGopen(name,suffix)
-char *name;
-char *suffix;
+/*
+ * Given a FIGlet font or control file name and suffix, return the file
+ * or NULL if not found.  Ensure that errno is unchanged from fopen call.
+ */
+ZFILE *
+FIGopen(const char *name, const char *suffix)
 {
   char *fontpath;
   ZFILE *fontfile;
