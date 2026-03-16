@@ -1989,17 +1989,12 @@ inchr getinchr()
     }
   }
 
-/****************************************************************************
 
-  main
-
-  The main program, of course.
-  Reads characters 1 by 1 from stdin, and makes lines out of them using
-  addchar. Handles line breaking, (which accounts for most of the
-  complexity in this function).
-
-****************************************************************************/
-
+/*
+ * Read characters 1 by 1 from stdin, and make lines out of them using
+ * addchar.  Handle line breaks, (which accounts for most of the
+ * complexity in this function).
+ */
 int
 main(int argc, char **argv)
 {
