@@ -1998,20 +1998,11 @@ inchr getinchr()
 int
 main(int argc, char **argv)
 {
-  inchr c,c2;
-  int i;
-  int last_was_eol_flag;
-/*---------------------------------------------------------------------------
-  wordbreakmode:
-    -1: /^$/ and blanks are to be absorbed (when line break was forced
-      by a blank or character larger than outlinelenlimit)
-    0: /^ *$/ and blanks are not to be absorbed
-    1: /[^ ]$/ no word break yet
-    2: /[^ ]  *$/
-    3: /[^ ]$/ had a word break
----------------------------------------------------------------------------*/
-  int wordbreakmode;
-  int char_not_added;
+	inchr c,c2;
+	int i;
+	int last_was_eol_flag;
+	int wordbreakmode;  /* (1) */
+	int char_not_added;
 
   Myargc = argc;
   Myargv = argv;
@@ -2126,3 +2117,12 @@ main(int argc, char **argv)
     }
   return 0;
 }
+/* (1)
+ * wordbreakmode:
+ *  -1: /^$/ and blanks are to be absorbed (when line break was forced
+ *    by a blank or character larger than outlinelenlimit)
+ *  0: /^ *$/ and blanks are not to be absorbed
+ *  1: /[^ ]$/ no word break yet
+ *  2: /[^ ]  *$/
+ *  3: /[^ ]$/ had a word break
+*/
