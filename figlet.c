@@ -998,7 +998,6 @@ getparams(int argc, char **argv)
         break;
       case 'F': /* Not a legal option */
         fprintf(stderr,"illegal option -- F\n");
-        printusage(stderr);
         fprintf(stderr,"\nBecause of numerous incompatibilities, the");
         fprintf(stderr," \"-F\" option has been\n");
         fprintf(stderr,"removed.  It has been replaced by the \"figlist\"");
@@ -1010,7 +1009,6 @@ getparams(int argc, char **argv)
         exit(1);
         break;
       default:
-        printusage(stderr);
         exit(1);
       }
     }
