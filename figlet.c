@@ -1186,26 +1186,20 @@ readfont(void)
 }
 
 
-/****************************************************************************
-
-  linealloc
-
-  Allocates & clears outputline, inchrline. Sets inchrlinelenlimit.
-  Called near beginning of main().
-
-****************************************************************************/
-
-void linealloc()
+/*
+ * Allocate & clear outputline, inchrline. Set inchrlinelenlimit.
+ */
+void
+linealloc(void)
 {
-  int row;
-
-  outputline = (outchr**)myalloc(sizeof(outchr*)*charheight);
-  for (row=0;row<charheight;row++) {
-    outputline[row] = (outchr*)myalloc(sizeof(outchr)*(outlinelenlimit+1));
-    }
-  inchrlinelenlimit = outputwidth*4+100;
-  inchrline = (inchr*)myalloc(sizeof(inchr)*(inchrlinelenlimit+1));
-  clearline();
+	size_t n = outlinelenlimit + 1;
+	outputline = myalloc(charheight * sizeof *outputline);
+	for (int row = 0; row < charheight; row += 1) {
+		outputline[row] = myalloc(n * sizeof **outputline);
+	}
+	inchrlinelenlimit = outputwidth * 4 + 100;
+	inchrline = myalloc((inchrlinelenlimit + 1) * sizeof *inchrline);
+	clearline();
 }
 
 
