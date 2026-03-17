@@ -1451,26 +1451,22 @@ putstring(outchr *string)
 			}
 		}
 	}
-  for (int i=0;i<len;i++) {
+	for (int i = 0; i < len; i += 1) {
 #ifdef TLF_FONTS
-	char c[10];
-	size_t size;
-	wchar_t wc[2];
-    wc[0] = string[i];
-    wc[1] = 0;
-    size = wchar_to_utf8(wc,1,c,10,0);
-    if(size==1) {
-      if(c[0]==hardblank) {
-        c[0] = ' ';
-        }
-      }
-    c[size] = 0;
-    printf("%s",c);
+		char c[10];
+		size_t size;
+		wchar_t wc[2] = {string[i], 0};
+		size = wchar_to_utf8(wc, 1, c, 10, 0);
+		if (size == 1 && c[0] == hardblank) {
+			c[0] = ' ';
+		}
+		c[size] = 0;
+		printf("%s", c);
 #else
-    putchar(string[i]==hardblank?' ':string[i]);
+		putchar(string[i] == hardblank ? ' ' : string[i]);
 #endif
-    }
-  putchar('\n');
+	}
+	putchar('\n');
 }
 
 
