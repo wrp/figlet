@@ -998,23 +998,17 @@ getparams(int argc, char **argv)
 }
 
 
-/****************************************************************************
-
-  clearline
-
-  Clears both the input (inchrline) and output (outputline) storage.
-
-****************************************************************************/
-
-void clearline()
+/*
+ * Clear both the input (inchrline) and output (outputline) storage.
+ */
+void
+clearline(void)
 {
-  int i;
-
-  for (i=0;i<charheight;i++) {
-    outputline[i][0] = '\0';
-    }
-  outlinelen = 0;
-  inchrlinelen = 0;
+	for (int i = 0; i < charheight; i += 1) {
+		outputline[i][0] = '\0';
+	}
+	outlinelen = 0;
+	inchrlinelen = 0;
 }
 
 
