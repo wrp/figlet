@@ -1427,42 +1427,33 @@ inchr c;
 }
 
 
-/****************************************************************************
-
-  putstring
-
-  Prints out the given null-terminated string, substituting blanks
-  for hardblanks.  If outputwidth is 1, prints the entire string;
-  otherwise prints at most outputwidth-1 characters.  Prints a newline
-  at the end of the string.  The string is left-justified, centered or
-  right-justified (taking outputwidth as the screen width) if
-  justification is 0, 1 or 2, respectively.
-
-****************************************************************************/
-
-void putstring(string)
-outchr *string;
+/*
+ * Print out the given null-terminated string, substituting blanks
+ * for hardblanks.  If outputwidth is 1, print the entire string;
+ * otherwise print at most outputwidth-1 characters.  Print a newline
+ * at the end of the string.  The string is left-justified, centered or
+ * right-justified (taking outputwidth as the screen width) if
+ * justification is 0, 1 or 2, respectively.
+ */
+void
+putstring(outchr *string)
 {
-  int i,len;
-  char c[10];
+	int len = STRLEN(string);
+	if (outputwidth > 1) {
+		if (len > outputwidth - 1) {
+			len = outputwidth - 1;
+		}
+		if (justification > 0) {
+			for (int i = 1; (3 - justification) * i + len + justification - 2 < outputwidth; i += 1) {
+				putchar(' ');
+			}
+		}
+	}
+  for (int i=0;i<len;i++) {
 #ifdef TLF_FONTS
-  size_t size;
-  wchar_t wc[2];
-#endif
-
-  len = STRLEN(string);
-  if (outputwidth>1) {
-    if (len>outputwidth-1) {
-      len = outputwidth-1;
-      }
-    if (justification>0) {
-      for (i=1;(3-justification)*i+len+justification-2<outputwidth;i++) {
-        putchar(' ');
-        }
-      }
-    }
-  for (i=0;i<len;i++) {
-#ifdef TLF_FONTS
+	char c[10];
+	size_t size;
+	wchar_t wc[2];
     wc[0] = string[i];
     wc[1] = 0;
     size = wchar_to_utf8(wc,1,c,10,0);
