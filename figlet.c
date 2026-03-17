@@ -1444,8 +1444,10 @@ putstring(outchr *string)
 			len = outputwidth - 1;
 		}
 		if (justification > 0) {
-			for (int i = 1; (3 - justification) * i + len + justification - 2 < outputwidth; i += 1) {
+			int n = 3 - justification + len + justification - 2;
+			while (n < outputwidth) {
 				putchar(' ');
+				n += 3 - justification;
 			}
 		}
 	}
