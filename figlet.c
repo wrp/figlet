@@ -775,15 +775,11 @@ readcontrolfiles(const struct args *A)
 }
 
 
-/****************************************************************************
-
-  clearcfilelist
-
-  Clears the control file list.  Assumes name does not need freeing.
-
-****************************************************************************/
-
-void clearcfilelist()
+/*
+ * Clear the control file list.  Assumes name does not need freeing.
+ */
+static void
+clearcfilelist(struct args *args)
 {
   struct cfn *cfnptr1,*cfnptr2;
 
@@ -943,7 +939,7 @@ getparams(int argc, char **argv, struct args *A)
         (*cfilelistend) = NULL;
         break;
       case 'N':
-        clearcfilelist();
+        clearcfilelist(A);
         multibyte = 0;
         gn[0] = 0;
         gn[1] = 0x80;
