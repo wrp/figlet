@@ -167,6 +167,8 @@ comnode *commandlist,**commandlistend;
 ****************************************************************************/
 struct args {
 	int deutschflag;
+	char *fontdirname;
+	char *fontname;
 };
 
 int justification,paragraphflag,right2left,multibyte;
@@ -192,7 +194,6 @@ int smushoverride;
 
 int outputwidth;
 int outlinelenlimit;
-char *fontdirname,*fontname;
 
 
 /****************************************************************************
@@ -387,10 +388,10 @@ printinfo(int infonum, const char *name, const struct args *A)
       printf("%d\n",VERSION_INT);
       break;
     case 2: /* Font directory */
-      printf("%s\n",fontdirname);
+      printf("%s\n", A->fontdirname);
       break;
     case 3: /* Font */
-      printf("%s\n",fontname);
+      printf("%s\n", A->fontname);
       break;
     case 4: /* Outputwidth */
       printf("%d\n",outputwidth);
@@ -634,12 +635,12 @@ FIGopen(const char *name, const char *suffix, const struct args *A)
   struct stat st;
   int namelen;
 
-  namelen = MYSTRLEN(fontdirname);
+  namelen = MYSTRLEN(A->fontdirname);
   fontpath = (char*)alloca(sizeof(char)*
     (namelen+MYSTRLEN(name)+MYSTRLEN(suffix)+2));
   fontfile = NULL;
   if (!hasdirsep(name)) {  /* not a full path name */
-    strcpy(fontpath,fontdirname);
+    strcpy(fontpath, A->fontdirname);
     fontpath[namelen] = DIRSEP;
     fontpath[namelen+1] = '\0';
     strcat(fontpath,name);
@@ -833,12 +834,12 @@ getparams(int argc, char **argv, struct args *A)
   int columns,infoprint;
   char *controlname,*env;
 
-  fontdirname = DEFAULTFONTDIR;
+  A->fontdirname = DEFAULTFONTDIR;
   env = getenv("FIGLET_FONTDIR");
   if (env!=NULL) {
-    fontdirname = env;
+    A->fontdirname = env;
     }
-  fontname = DEFAULTFONTFILE;
+  A->fontname = DEFAULTFONTFILE;
   cfilelist = NULL;
   cfilelistend = &cfilelist;
   commandlist = NULL;
@@ -944,16 +945,16 @@ getparams(int argc, char **argv, struct args *A)
           }
         break;
       case 'd':
-        fontdirname = optarg;
+        A->fontdirname = optarg;
         break;
       case 'f':
-        fontname = optarg;
-        if (suffixcmp(fontname,FONTFILESUFFIX)) {
-          fontname[MYSTRLEN(fontname)-FSUFFIXLEN] = '\0';
+        A->fontname = optarg;
+        if (suffixcmp(A->fontname,FONTFILESUFFIX)) {
+          A->fontname[MYSTRLEN(A->fontname)-FSUFFIXLEN] = '\0';
           }
 #ifdef TLF_FONTS
-        else if (suffixcmp(fontname,TOILETFILESUFFIX)) {
-          fontname[MYSTRLEN(fontname)-TSUFFIXLEN] = '\0';
+        else if (suffixcmp(A->fontname,TOILETFILESUFFIX)) {
+          A->fontname[MYSTRLEN(A->fontname)-TSUFFIXLEN] = '\0';
           }
 #endif
         break;
@@ -1072,10 +1073,10 @@ readfont(const struct args *A)
   char fileline[MAXLEN+1],magicnum[5];
   ZFILE *fontfile;
 
-  fontfile = FIGopen(fontname,FONTFILESUFFIX, A);
+  fontfile = FIGopen(A->fontname,FONTFILESUFFIX, A);
 #ifdef TLF_FONTS
   if (fontfile==NULL) {
-    fontfile = FIGopen(fontname,TOILETFILESUFFIX, A);
+    fontfile = FIGopen(A->fontname,TOILETFILESUFFIX, A);
     if(fontfile) toiletfont = 1;
     }
 #endif
@@ -1084,7 +1085,7 @@ readfont(const struct args *A)
 		fprintf(
 			stderr,
 			"Error opening fontfile '%s': %s\n",
-			fontname,
+			A->fontname,
 			strerror(errno)
 		);
 		exit(1);
@@ -1102,7 +1103,7 @@ readfont(const struct args *A)
     &ffright2left,&smush2);
 
   if (maxlen > MAXLEN) {
-    fprintf(stderr,"%s: character is too wide\n", fontname);
+    fprintf(stderr,"%s: character is too wide\n", A->fontname);
     exit(1);
     }
 #ifdef TLF_FONTS
@@ -1111,7 +1112,7 @@ readfont(const struct args *A)
 #else
   if (strcmp(magicnum,FONTFILEMAGICNUMBER) || numsread<5) {
 #endif
-    fprintf(stderr,"%s: Not a FIGlet 2 font file\n", fontname);
+    fprintf(stderr,"%s: Not a FIGlet 2 font file\n", A->fontname);
     exit(1);
     }
   for (i=1;i<=cmtlines;i++) {
