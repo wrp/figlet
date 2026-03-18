@@ -143,12 +143,12 @@ int outlinelen;
 
 ****************************************************************************/
 
-typedef struct cfn {
-  char *thename;
-  struct cfn *next;
-  } cfnamenode;
+struct cfn {
+	char *thename;
+	struct cfn *next;
+};
 
-cfnamenode *cfilelist,**cfilelistend;
+struct cfn *cfilelist,**cfilelistend;
 
 typedef struct cm {
   int thecommand;
@@ -794,7 +794,7 @@ readcontrol(const char *controlname, const struct args *A)
 static void
 readcontrolfiles(const struct args *A)
 {
-	cfnamenode *cfnptr;
+	struct cfn *cfnptr;
 
 	for (cfnptr = cfilelist; cfnptr != NULL; cfnptr = cfnptr->next) {
 		readcontrol(cfnptr->thename, A);
@@ -812,7 +812,7 @@ readcontrolfiles(const struct args *A)
 
 void clearcfilelist()
 {
-  cfnamenode *cfnptr1,*cfnptr2;
+  struct cfn *cfnptr1,*cfnptr2;
 
   cfnptr1 = cfilelist;
   while (cfnptr1 != NULL) {
@@ -964,7 +964,7 @@ getparams(int argc, char **argv, struct args *A)
         if (suffixcmp(controlname, CONTROLFILESUFFIX)) {
           controlname[MYSTRLEN(controlname)-CSUFFIXLEN] = '\0';
           }
-        (*cfilelistend) = (cfnamenode*)myalloc(sizeof(cfnamenode));
+        (*cfilelistend) = myalloc(sizeof **cfilelistend);
         (*cfilelistend)->thename = controlname;
         cfilelistend = &(*cfilelistend)->next;
         (*cfilelistend) = NULL;
