@@ -625,29 +625,20 @@ FIGopen(const char *name, const char *suffix, const struct args *A)
 {
   char *fontpath;
   ZFILE *fontfile;
-  struct stat st;
   int namelen;
 
   namelen = MYSTRLEN(A->fontdirname);
   fontpath = (char*)alloca(sizeof(char)*
     (namelen+MYSTRLEN(name)+MYSTRLEN(suffix)+2));
+  fontpath[0] = '\0';
   fontfile = NULL;
   if (!hasdirsep(name)) {  /* not a full path name */
     strcpy(fontpath, A->fontdirname);
     fontpath[namelen] = DIRSEP;
     fontpath[namelen+1] = '\0';
-    strcat(fontpath,name);
-    strcat(fontpath,suffix);
-    if(stat(fontpath,&st)==0) goto ok;
     }
-  /* just append suffix */
-  strcpy(fontpath,name);
+  strcat(fontpath,name);
   strcat(fontpath,suffix);
-  if(stat(fontpath,&st)==0) goto ok;
-
-  return NULL;
-
-ok:
   fontfile = Zopen(fontpath,"rb");
   return fontfile;
 }
