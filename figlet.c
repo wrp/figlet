@@ -406,24 +406,17 @@ printinfo(int infonum, const char *name, const struct args *A)
 }
 
 
-/****************************************************************************
-
-  readmagic
-
-  Reads a four-character magic string from a stream.
-
-****************************************************************************/
-void readmagic(fp,magic)
-ZFILE *fp;
-char *magic;
+/*
+ * Read a four-character magic string from a stream.
+ */
+static void
+readmagic(ZFILE *fp, char *magic)
 {
-  int i;
-
-  for (i=0;i<4;i++) {
-    magic[i] = Zgetc(fp);
-    }
-  magic[4] = 0;
-  }
+	for (int i = 0; i < 4; i += 1) {
+		magic[i] = Zgetc(fp);
+	}
+	magic[4] = '\0';
+}
 
 /****************************************************************************
 
