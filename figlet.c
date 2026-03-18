@@ -658,17 +658,11 @@ ok:
   return fontfile;
 }
 
-/****************************************************************************
-
-  readcontrol
-
-  Allocates memory and reads in the given control file.
-  Called in readcontrolfiles().
-
-****************************************************************************/
-
-void readcontrol(controlname)
-char *controlname;
+/*
+ * Allocate memory and read in the given control file.
+ */
+static void
+readcontrol(const char *controlname, const struct args *A)
 {
   inchr firstch,lastch;
   char dashcheck;
@@ -792,22 +786,17 @@ char *controlname;
 }
 
 
-/****************************************************************************
-
-  readcontrolfiles
-
-  Reads in the controlfiles names in cfilelist.  Uses readcontrol.
-  Called in main().
-
-****************************************************************************/
-
-void readcontrolfiles()
+/*
+ * Read in the controlfiles named in cfilelist.
+ */
+static void
+readcontrolfiles(const struct args *A)
 {
-  cfnamenode *cfnptr;
+	cfnamenode *cfnptr;
 
-  for (cfnptr=cfilelist;cfnptr!=NULL;cfnptr=cfnptr->next) {
-    readcontrol(cfnptr->thename);
-    }
+	for (cfnptr = cfilelist; cfnptr != NULL; cfnptr = cfnptr->next) {
+		readcontrol(cfnptr->thename, A);
+	}
 }
 
 
@@ -1873,7 +1862,7 @@ main(int argc, char **argv)
 
 	Myargv = argv;
 	getparams(argc, argv, args);
-  readcontrolfiles();
+	readcontrolfiles(args);
   readfont();
   linealloc();
 
