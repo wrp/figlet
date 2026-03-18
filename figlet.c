@@ -675,13 +675,16 @@ readcontrol(const char *controlname, const struct args *A)
         skipws(controlfile);
         offset=readTchar(controlfile)-firstch;
         skiptoeol(controlfile);
-        (*commandlistend) = myalloc(sizeof **commandlistend);
-        (*commandlistend)->command = 1;
-        (*commandlistend)->rangelo = firstch;
-        (*commandlistend)->rangehi = lastch;
-        (*commandlistend)->offset = offset;
-        commandlistend = &(*commandlistend)->next;
-        (*commandlistend) = NULL;
+        {
+        struct cm *p;
+        *commandlistend = p = myalloc(sizeof **commandlistend);
+        p->command = 1;
+        p->rangelo = firstch;
+        p->rangehi = lastch;
+        p->offset = offset;
+        p->next = NULL;
+        commandlistend = &p->next;
+        }
         break;
       case '0': case '1': case '2': case '3': case '4':
       case '5': case '6': case '7': case '8': case '9':
