@@ -1431,7 +1431,7 @@ inchr c;
  * justification is 0, 1 or 2, respectively.
  */
 void
-putstring(outchr *string)
+putstring(outchr *string, const struct args *A)
 {
 	int len = STRLEN(string);
 	if (outputwidth > 1) {
@@ -1465,16 +1465,13 @@ putstring(outchr *string)
 }
 
 
-/*
- * Print outputline using putstring, then clear the current line.
- */
 static void
 printline(const struct args *A)
 {
   int i;
 
   for (i=0;i<charheight;i++) {
-    putstring(outputline[i]);
+    putstring(outputline[i], A);
     }
   clearline();
 }
@@ -1926,10 +1923,10 @@ main(int argc, char **argv)
       else if (outlinelen==0) {
         for (i=0;i<charheight;i++) {
           if (right2left && outputwidth>1) {
-            putstring(currchar[i]+STRLEN(currchar[i])-outlinelenlimit);
+            putstring(currchar[i]+STRLEN(currchar[i])-outlinelenlimit, args);
             }
           else {
-            putstring(currchar[i]);
+            putstring(currchar[i], args);
             }
           }
         wordbreakmode = -1;
