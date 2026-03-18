@@ -365,8 +365,8 @@ printusage(const char *name)
 /*
  * Print version and copyright message, or utility information.
  */
-void
-printinfo(int infonum, const char *name)
+static void
+printinfo(int infonum, const char *name, const struct args *A)
 {
   switch (infonum) {
     case 0: /* Copyright message */
@@ -987,7 +987,7 @@ getparams(int argc, char **argv, struct args *A)
   }
   outlinelenlimit = outputwidth-1;
   if (infoprint>=0) {
-    printinfo(infoprint, argv[0]);
+    printinfo(infoprint, argv[0], A);
     exit(0);
     }
 }
