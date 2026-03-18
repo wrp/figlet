@@ -123,13 +123,13 @@ typedef char outchr; /* "char" written to stdout */
 #define ISSPACE(x) isspace(x)
 #endif
 
-typedef struct fc {
+struct fc {
   inchr ord;
   outchr **thechar;  /* Alloc'd char thechar[charheight][]; */
   struct fc *next;
-  } fcharnode;
+  };
 
-fcharnode *fcharlist;
+struct fc *fcharlist;
 outchr **currchar;
 int currcharwidth;
 int previouscharwidth;
@@ -1025,10 +1025,10 @@ inchr theord;
   int row,k;
   char templine[MAXLEN+1];
   outchr endchar, outline[MAXLEN+1];
-  fcharnode *fclsave;
+  struct fc *fclsave;
 
   fclsave = fcharlist;
-  fcharlist = (fcharnode*)myalloc(sizeof(fcharnode));
+  fcharlist = myalloc(sizeof *fcharlist);
   fcharlist->ord = theord;
   fcharlist->thechar = (outchr**)myalloc(sizeof(outchr*)*charheight);
   fcharlist->next = fclsave;
@@ -1154,7 +1154,7 @@ readfont(struct args *A)
     }
 
   /* Allocate "missing" character */
-  fcharlist = (fcharnode*)myalloc(sizeof(fcharnode));
+  fcharlist = myalloc(sizeof *fcharlist);
   fcharlist->ord = 0;
   fcharlist->thechar = (outchr**)myalloc(sizeof(outchr*)*charheight);
   fcharlist->next = NULL;
@@ -1205,7 +1205,7 @@ linealloc(void)
 void getletter(c)
 inchr c;
 {
-  fcharnode *charptr;
+  struct fc *charptr;
 
   for (charptr=fcharlist;charptr==NULL?0:charptr->ord!=c;
     charptr=charptr->next) ;
