@@ -1578,32 +1578,27 @@ inchr c;
 int
 read_from_args(void)
 {
-    extern int optind;		/* current argv[] element under study */
-    static int AgetMode = 0;	/* >= 0 for displacement into argv[n], <0 EOF */
-    char   *arg;		/* pointer to active character */
-    int    c;			/* current character */
+	static char *arg = NULL;
 
-    if ( AgetMode < 0 || optind >= Myargc )		/* EOF is sticky: */
-	return( EOF );		/* **ensure it now and forever more */
-
-    /* find next character */
-    arg = Myargv[optind];		/* pointer to active arg */
-    c = arg[AgetMode++]&0xFF;	/* get appropriate char of arg */
-
-    if ( ! c )			/* at '\0' that terminates word? */
-    {   /* at end of word: return ' ' if normal word, '\n' if empty */
-	c = ' ';		/* suppose normal word and return blank */
-	if ( AgetMode == 1 )	/* if ran out in very 1st char, force \n */
-	    c = '\n';		/* (allows "hello '' world" to do \n at '') */
-	AgetMode = 0;		/* return to char 0 in NEXT word */
-	if ( ++optind >= Myargc )	/* run up word count and check if at "EOF" */
-	{   /* just ran out of arguments */
-	    c = EOF;		/* return EOF */
-	    AgetMode = -1;	/* ensure all future returns return EOF */
+	if (optind >= Myargc) {
+		return EOF;
 	}
-    }
 
-    return( c );		/* return appropriate character */
+	if (arg == NULL) {
+		arg = Myargv[optind];
+	}
+	int c = *arg++ & 0xFF;
+
+	if (c == '\0') {
+		c = --arg == Myargv[optind] ? '\n' : ' ';
+		if (++optind >= Myargc) {
+			c = EOF;
+		} else {
+			arg = Myargv[optind];
+		}
+	}
+
+	return c;
 }
 
 /****************************************************************************
