@@ -146,8 +146,6 @@ struct cfn {
 	struct cfn *next;
 };
 
-struct cfn *cfilelist,**cfilelistend;
-
 struct cm {
   int command;
   inchr rangelo;
@@ -168,6 +166,8 @@ struct args {
 	char *fontdirname;
 	char *fontname;
 	int justification;
+	struct cfn *cfilelist;
+	struct cfn **cfilelistend;
 };
 
 int paragraphflag,right2left,multibyte;
@@ -769,7 +769,7 @@ readcontrolfiles(const struct args *A)
 {
 	struct cfn *cfnptr;
 
-	for (cfnptr = cfilelist; cfnptr != NULL; cfnptr = cfnptr->next) {
+	for (cfnptr = A->cfilelist; cfnptr != NULL; cfnptr = cfnptr->next) {
 		readcontrol(cfnptr->name, A);
 	}
 }
@@ -783,14 +783,14 @@ clearcfilelist(struct args *args)
 {
   struct cfn *cfnptr1,*cfnptr2;
 
-  cfnptr1 = cfilelist;
+  cfnptr1 = args->cfilelist;
   while (cfnptr1 != NULL) {
     cfnptr2 = cfnptr1->next;
     free(cfnptr1);
     cfnptr1 = cfnptr2;
     }
-  cfilelist = NULL;
-  cfilelistend = &cfilelist;
+  args->cfilelist = NULL;
+  args->cfilelistend = &args->cfilelist;
 }
 
 
@@ -810,8 +810,8 @@ getparams(int argc, char **argv, struct args *A)
     A->fontdirname = env;
     }
   A->fontname = DEFAULTFONTFILE;
-  cfilelist = NULL;
-  cfilelistend = &cfilelist;
+  A->cfilelist = NULL;
+  A->cfilelistend = &A->cfilelist;
   commandlist = NULL;
   commandlistend = &commandlist;
   smushoverride = SMO_NO;
@@ -933,10 +933,10 @@ getparams(int argc, char **argv, struct args *A)
         if (suffixcmp(controlname, CONTROLFILESUFFIX)) {
           controlname[MYSTRLEN(controlname)-CSUFFIXLEN] = '\0';
           }
-        (*cfilelistend) = myalloc(sizeof **cfilelistend);
-        (*cfilelistend)->name = controlname;
-        cfilelistend = &(*cfilelistend)->next;
-        (*cfilelistend) = NULL;
+        *A->cfilelistend = myalloc(sizeof **A->cfilelistend);
+        (*A->cfilelistend)->name = controlname;
+        A->cfilelistend = &(*A->cfilelistend)->next;
+        *A->cfilelistend = NULL;
         break;
       case 'N':
         clearcfilelist(A);
