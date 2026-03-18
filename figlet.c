@@ -623,17 +623,14 @@ ZFILE *
 FIGopen(const char *name, const char *suffix, const struct args *A)
 {
   char fontpath[PATH_MAX];
-  ZFILE *fontfile;
 
   fontpath[0] = '\0';
-  fontfile = NULL;
   if (!hasdirsep(name)) {  /* not a full path name */
     snprintf(fontpath, PATH_MAX, "%s%c", A->fontdirname, DIRSEP);
     }
   strcat(fontpath,name);
   strcat(fontpath,suffix);
-  fontfile = Zopen(fontpath,"rb");
-  return fontfile;
+  return Zopen(fontpath,"rb");
 }
 
 /*
