@@ -150,15 +150,15 @@ struct cfn {
 
 struct cfn *cfilelist,**cfilelistend;
 
-typedef struct cm {
+struct cm {
   int command;
   inchr rangelo;
   inchr rangehi;
   inchr offset;
   struct cm *next;
-  } comnode;
+  };
 
-comnode *commandlist,**commandlistend;
+struct cm *commandlist,**commandlistend;
 
 /****************************************************************************
 
@@ -682,7 +682,7 @@ readcontrol(const char *controlname, const struct args *A)
 		exit(1);
 	}
 
-  (*commandlistend) = (comnode*)myalloc(sizeof(comnode));
+  (*commandlistend) = myalloc(sizeof **commandlistend);
   (*commandlistend)->command = 0; /* Begin with a freeze command */
   commandlistend = &(*commandlistend)->next;
   (*commandlistend) = NULL;
@@ -702,7 +702,7 @@ readcontrol(const char *controlname, const struct args *A)
         skipws(controlfile);
         offset=readTchar(controlfile)-firstch;
         skiptoeol(controlfile);
-        (*commandlistend) = (comnode*)myalloc(sizeof(comnode));
+        (*commandlistend) = myalloc(sizeof **commandlistend);
         (*commandlistend)->command = 1;
         (*commandlistend)->rangelo = firstch;
         (*commandlistend)->rangehi = lastch;
@@ -721,7 +721,7 @@ readcontrol(const char *controlname, const struct args *A)
 	offset=lastch-firstch;
         lastch=firstch;
         skiptoeol(controlfile);
-        (*commandlistend) = (comnode*)myalloc(sizeof(comnode));
+        (*commandlistend) = myalloc(sizeof **commandlistend);
         (*commandlistend)->command = 1;
         (*commandlistend)->rangelo = firstch;
         (*commandlistend)->rangehi = lastch;
@@ -731,7 +731,7 @@ readcontrol(const char *controlname, const struct args *A)
         break;
       case 'f': /* freeze */
         skiptoeol(controlfile);
-        (*commandlistend) = (comnode*)myalloc(sizeof(comnode));
+        (*commandlistend) = myalloc(sizeof **commandlistend);
         (*commandlistend)->command = 0;
         commandlistend = &(*commandlistend)->next;
         (*commandlistend) = NULL;
@@ -1535,7 +1535,7 @@ splitline(const struct args *A)
 inchr handlemapping(c)
 inchr c;
 {
-  comnode *cmptr;
+  struct cm *cmptr;
 
   cmptr=commandlist;
   while (cmptr!=NULL) {
