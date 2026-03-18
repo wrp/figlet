@@ -165,8 +165,11 @@ comnode *commandlist,**commandlistend;
   Globals affected by command line options
 
 ****************************************************************************/
+struct args {
+	int deutschflag;
+};
 
-int deutschflag,justification,paragraphflag,right2left,multibyte;
+int justification,paragraphflag,right2left,multibyte;
 int read_from_args(void);
 int (*Agetchar)(void) = getchar;
 
@@ -835,7 +838,7 @@ void clearcfilelist()
  * Handle command-line arguments
  */
 static void
-getparams(int argc, char **argv)
+getparams(int argc, char **argv, struct args *A)
 {
   int c;
   int columns,infoprint;
@@ -852,7 +855,7 @@ getparams(int argc, char **argv)
   commandlist = NULL;
   commandlistend = &commandlist;
   smushoverride = SMO_NO;
-  deutschflag = 0;
+  A->deutschflag = 0;
   justification = -1;
   right2left = -1;
   paragraphflag = 0;
@@ -867,10 +870,10 @@ getparams(int argc, char **argv)
         Agetchar = read_from_args;
         break;
       case 'D':
-        deutschflag = 1;
+        A->deutschflag = 1;
         break;
       case 'E':
-        deutschflag = 0;
+        A->deutschflag = 0;
         break;
       case 'X':
         right2left = -1;
@@ -1861,6 +1864,7 @@ inchr getinchr()
 int
 main(int argc, char **argv)
 {
+	struct args args[1] = {{0}};
 	inchr c,c2;
 	int i;
 	int last_was_eol_flag;
@@ -1868,7 +1872,7 @@ main(int argc, char **argv)
 	int char_not_added;
 
 	Myargv = argv;
-	getparams(argc, argv);
+	getparams(argc, argv, args);
   readcontrolfiles();
   readfont();
   linealloc();
@@ -1888,7 +1892,7 @@ main(int argc, char **argv)
       }
     last_was_eol_flag = (isascii(c)&&isspace(c)&&c!='\t'&&c!=' ');
 
-    if (deutschflag) {
+    if (args->deutschflag) {
       if (c>='[' && c<=']') {
         c = deutsch[c-'['];
         }
