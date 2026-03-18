@@ -144,7 +144,7 @@ int outlinelen;
 ****************************************************************************/
 
 struct cfn {
-	char *thename;
+	char *name;
 	struct cfn *next;
 };
 
@@ -797,7 +797,7 @@ readcontrolfiles(const struct args *A)
 	struct cfn *cfnptr;
 
 	for (cfnptr = cfilelist; cfnptr != NULL; cfnptr = cfnptr->next) {
-		readcontrol(cfnptr->thename, A);
+		readcontrol(cfnptr->name, A);
 	}
 }
 
@@ -806,7 +806,7 @@ readcontrolfiles(const struct args *A)
 
   clearcfilelist
 
-  Clears the control file list.  Assumes thename does not need freeing.
+  Clears the control file list.  Assumes name does not need freeing.
 
 ****************************************************************************/
 
@@ -965,7 +965,7 @@ getparams(int argc, char **argv, struct args *A)
           controlname[MYSTRLEN(controlname)-CSUFFIXLEN] = '\0';
           }
         (*cfilelistend) = myalloc(sizeof **cfilelistend);
-        (*cfilelistend)->thename = controlname;
+        (*cfilelistend)->name = controlname;
         cfilelistend = &(*cfilelistend)->next;
         (*cfilelistend) = NULL;
         break;
