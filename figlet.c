@@ -58,7 +58,6 @@ Note: '/' also used in filename in get_columns(). */
 #define FONTFILEMAGICNUMBER "flf2"
 #define FSUFFIXLEN MYSTRLEN(FONTFILESUFFIX)
 #define CONTROLFILESUFFIX ".flc"
-#define CONTROLFILEMAGICNUMBER "flc2"   /* no longer used in 2.2 */
 #define CSUFFIXLEN MYSTRLEN(CONTROLFILESUFFIX)
 #define DEFAULTCOLUMNS 80
 #define MAXLEN 255     /* Maximum character width */
