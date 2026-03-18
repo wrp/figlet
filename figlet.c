@@ -1492,34 +1492,25 @@ splitline(const struct args *A)
 }
 
 
-/****************************************************************************
-
-  handlemapping
-
-  Given an input character (type inchr), executes re-mapping commands
-  read from control files.  Returns re-mapped character (inchr).
-
-****************************************************************************/
-
-inchr handlemapping(c)
-inchr c;
+/*
+ * Execute re-mapping commands from control files.
+ */
+static inchr
+handlemapping(inchr c)
 {
-  struct cm *cmptr;
+	struct cm *p = commandlist;
 
-  cmptr=commandlist;
-  while (cmptr!=NULL) {
-    if (cmptr->command ?
-      (c >= cmptr->rangelo && c <= cmptr->rangehi) : 0) {
-      c += cmptr->offset;
-      while(cmptr!=NULL ? cmptr->command : 0) {
-        cmptr=cmptr->next;
-        }
-      }
-    else {
-      cmptr=cmptr->next;
-      }
-    }
-  return c;
+	while (p != NULL) {
+		if (p->command && c >= p->rangelo && c <= p->rangehi) {
+			c += p->offset;
+			while( p != NULL && p->command) {
+				p = p->next;
+			}
+		} else {
+			p = p->next;
+		}
+	}
+	return c;
 }
 
 
