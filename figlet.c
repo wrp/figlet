@@ -151,7 +151,7 @@ struct cfn {
 struct cfn *cfilelist,**cfilelistend;
 
 typedef struct cm {
-  int thecommand;
+  int command;
   inchr rangelo;
   inchr rangehi;
   inchr offset;
@@ -683,7 +683,7 @@ readcontrol(const char *controlname, const struct args *A)
 	}
 
   (*commandlistend) = (comnode*)myalloc(sizeof(comnode));
-  (*commandlistend)->thecommand = 0; /* Begin with a freeze command */
+  (*commandlistend)->command = 0; /* Begin with a freeze command */
   commandlistend = &(*commandlistend)->next;
   (*commandlistend) = NULL;
 
@@ -703,7 +703,7 @@ readcontrol(const char *controlname, const struct args *A)
         offset=readTchar(controlfile)-firstch;
         skiptoeol(controlfile);
         (*commandlistend) = (comnode*)myalloc(sizeof(comnode));
-        (*commandlistend)->thecommand = 1;
+        (*commandlistend)->command = 1;
         (*commandlistend)->rangelo = firstch;
         (*commandlistend)->rangehi = lastch;
         (*commandlistend)->offset = offset;
@@ -722,7 +722,7 @@ readcontrol(const char *controlname, const struct args *A)
         lastch=firstch;
         skiptoeol(controlfile);
         (*commandlistend) = (comnode*)myalloc(sizeof(comnode));
-        (*commandlistend)->thecommand = 1;
+        (*commandlistend)->command = 1;
         (*commandlistend)->rangelo = firstch;
         (*commandlistend)->rangehi = lastch;
         (*commandlistend)->offset = offset;
@@ -732,7 +732,7 @@ readcontrol(const char *controlname, const struct args *A)
       case 'f': /* freeze */
         skiptoeol(controlfile);
         (*commandlistend) = (comnode*)myalloc(sizeof(comnode));
-        (*commandlistend)->thecommand = 0;
+        (*commandlistend)->command = 0;
         commandlistend = &(*commandlistend)->next;
         (*commandlistend) = NULL;
         break;
@@ -1539,10 +1539,10 @@ inchr c;
 
   cmptr=commandlist;
   while (cmptr!=NULL) {
-    if (cmptr->thecommand ?
+    if (cmptr->command ?
       (c >= cmptr->rangelo && c <= cmptr->rangehi) : 0) {
       c += cmptr->offset;
-      while(cmptr!=NULL ? cmptr->thecommand : 0) {
+      while(cmptr!=NULL ? cmptr->command : 0) {
         cmptr=cmptr->next;
         }
       }
