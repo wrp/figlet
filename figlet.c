@@ -627,7 +627,7 @@ ZFILE *controlfile;
  * or NULL if not found.  Ensure that errno is unchanged from fopen call.
  */
 ZFILE *
-FIGopen(const char *name, const char *suffix)
+FIGopen(const char *name, const char *suffix, const struct args *A)
 {
   char *fontpath;
   ZFILE *fontfile;
@@ -670,7 +670,7 @@ readcontrol(const char *controlname, const struct args *A)
   int command;
   ZFILE *controlfile;
 
-  controlfile = FIGopen(controlname,CONTROLFILESUFFIX);
+  controlfile = FIGopen(controlname,CONTROLFILESUFFIX, A);
 
 	if (controlfile == NULL) {
 		fprintf(
@@ -1072,10 +1072,10 @@ readfont(const struct args *A)
   char fileline[MAXLEN+1],magicnum[5];
   ZFILE *fontfile;
 
-  fontfile = FIGopen(fontname,FONTFILESUFFIX);
+  fontfile = FIGopen(fontname,FONTFILESUFFIX, A);
 #ifdef TLF_FONTS
   if (fontfile==NULL) {
-    fontfile = FIGopen(fontname,TOILETFILESUFFIX);
+    fontfile = FIGopen(fontname,TOILETFILESUFFIX, A);
     if(fontfile) toiletfont = 1;
     }
 #endif
