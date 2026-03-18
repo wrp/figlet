@@ -168,7 +168,8 @@ comnode *commandlist,**commandlistend;
 ****************************************************************************/
 
 int deutschflag,justification,paragraphflag,right2left,multibyte;
-int cmdinput;
+int read_from_args(void);
+int (*Agetchar)(void) = getchar;
 
 #define SM_SMUSH 128
 #define SM_KERN 64
@@ -857,14 +858,14 @@ getparams(int argc, char **argv)
   right2left = -1;
   paragraphflag = 0;
   infoprint = -1;
-  cmdinput = 0;
+  Agetchar = getchar;
   outputwidth = DEFAULTCOLUMNS;
   gn[1] = 0x80;
   gr = 1;
   while ((c = getopt(argc,argv,"ADEXLRI:xlcrpntvm:w:d:f:C:NskSWo"))!= -1) {
     switch (c) {
       case 'A':
-        cmdinput = 1;
+        Agetchar = read_from_args;
         break;
       case 'D':
         deutschflag = 1;
@@ -989,7 +990,9 @@ getparams(int argc, char **argv)
         exit(1);
       }
     }
-  if (optind!=argc) cmdinput = 1; /* force cmdinput if more arguments */
+  if (optind!=argc) {
+    Agetchar = read_from_args;
+  }
   outlinelenlimit = outputwidth-1;
   if (infoprint>=0) {
     printinfo(infoprint, argv[0]);
@@ -1568,25 +1571,17 @@ inchr c;
   return c;
 }
 
-/****************************************************************************
 
-  Agetchar
-
-  Replacement to getchar().
-  Acts exactly like getchar if -A is NOT specified,
-  else obtains input from All remaining command line words.
-
-****************************************************************************/
-
-int Agetchar()
+/*
+ * Wrapper for getchar() that returns characters from args.
+ */
+int
+read_from_args(void)
 {
     extern int optind;		/* current argv[] element under study */
     static int AgetMode = 0;	/* >= 0 for displacement into argv[n], <0 EOF */
     char   *arg;		/* pointer to active character */
     int    c;			/* current character */
-
-    if ( ! cmdinput )		/* is -A active? */
-	return( getchar() );	/* no: return stdin character */
 
     if ( AgetMode < 0 || optind >= Myargc )		/* EOF is sticky: */
 	return( EOF );		/* **ensure it now and forever more */
@@ -1609,9 +1604,7 @@ int Agetchar()
     }
 
     return( c );		/* return appropriate character */
-
-}	/* end: Agetchar() */
-
+}
 
 /****************************************************************************
 
