@@ -1465,15 +1465,11 @@ putstring(outchr *string)
 }
 
 
-/****************************************************************************
-
-  printline
-
-  Prints outputline using putstring, then clears the current line.
-
-****************************************************************************/
-
-void printline()
+/*
+ * Print outputline using putstring, then clear the current line.
+ */
+static void
+printline(void)
 {
   int i;
 
