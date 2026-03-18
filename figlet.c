@@ -1469,7 +1469,7 @@ putstring(outchr *string)
  * Print outputline using putstring, then clear the current line.
  */
 static void
-printline(void)
+printline(const struct args *A)
 {
   int i;
 
@@ -1516,7 +1516,7 @@ splitline(const struct args *A)
   for (i=0;i<len1;i++) {
     addchar(part1[i]);
     }
-  printline();
+  printline(A);
   for (i=0;i<len2;i++) {
     addchar(part2[i]);
     }
@@ -1910,7 +1910,7 @@ main(int argc, char **argv)
         }
 
       if (c=='\n') {
-        printline();
+        printline(args);
         wordbreakmode = 0;
         }
 
@@ -1940,7 +1940,7 @@ main(int argc, char **argv)
           splitline(args);
           }
         else {
-          printline();
+          printline(args);
           }
         wordbreakmode = -1;
         }
@@ -1950,7 +1950,7 @@ main(int argc, char **argv)
           splitline(args);
           }
         else {
-          printline();
+          printline(args);
           }
         wordbreakmode = (wordbreakmode==3)?1:0;
         char_not_added = 1;
@@ -1960,7 +1960,7 @@ main(int argc, char **argv)
     }
 
   if (outlinelen!=0) {
-    printline();
+    printline(args);
     }
   return 0;
 }
