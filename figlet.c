@@ -1583,14 +1583,11 @@ read_from_args(void)
 	if (arg == NULL) {
 		arg = *Myargv;
 	}
-	if (arg == NULL) {
-		return EOF;
-	}
-	int c = *arg++ & 0xFF;
+	int c = arg == NULL ? EOF : *arg++ & 0xFF;
 
 	if (c == '\0') {
 		/* Treat empty argument as request to insert newline */
-		c = --arg == *Myargv ? '\n' : ' ';
+		c = arg - *Myargv == 1 ? '\n' : ' ';
 		arg = *++Myargv;
 		if (arg == NULL) {
 			c = EOF;
