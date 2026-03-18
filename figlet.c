@@ -990,7 +990,8 @@ getparams(int argc, char **argv)
         exit(1);
       }
     }
-  if (optind!=argc) {
+  Myargv += optind;
+  if (*Myargv) {
     Agetchar = read_from_args;
   }
   outlinelenlimit = outputwidth-1;
@@ -1580,21 +1581,20 @@ read_from_args(void)
 {
 	static char *arg = NULL;
 
-	if (optind >= Myargc) {
-		return EOF;
-	}
-
 	if (arg == NULL) {
-		arg = Myargv[optind];
+		arg = *Myargv;
+	}
+	if (arg == NULL) {
+		return EOF;
 	}
 	int c = *arg++ & 0xFF;
 
 	if (c == '\0') {
-		c = --arg == Myargv[optind] ? '\n' : ' ';
-		if (++optind >= Myargc) {
+		/* Treat empty argument as request to insert newline */
+		c = --arg == *Myargv ? '\n' : ' ';
+		arg = *++Myargv;
+		if (arg == NULL) {
 			c = EOF;
-		} else {
-			arg = Myargv[optind];
 		}
 	}
 
