@@ -26,9 +26,8 @@
 
 #include <errno.h>
 #include <stdio.h>
-#ifdef __STDC__
 #include <stdlib.h>
-#endif
+#include <limits.h>
 #include <string.h>
 #include <ctype.h>
 #include <sys/stat.h>
@@ -623,19 +622,13 @@ ZFILE *controlfile;
 ZFILE *
 FIGopen(const char *name, const char *suffix, const struct args *A)
 {
-  char *fontpath;
+  char fontpath[PATH_MAX];
   ZFILE *fontfile;
-  int namelen;
 
-  namelen = MYSTRLEN(A->fontdirname);
-  fontpath = (char*)alloca(sizeof(char)*
-    (namelen+MYSTRLEN(name)+MYSTRLEN(suffix)+2));
   fontpath[0] = '\0';
   fontfile = NULL;
   if (!hasdirsep(name)) {  /* not a full path name */
-    strcpy(fontpath, A->fontdirname);
-    fontpath[namelen] = DIRSEP;
-    fontpath[namelen+1] = '\0';
+    snprintf(fontpath, PATH_MAX, "%s%c", A->fontdirname, DIRSEP);
     }
   strcat(fontpath,name);
   strcat(fontpath,suffix);
