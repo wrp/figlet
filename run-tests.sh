@@ -79,6 +79,7 @@ run_test "list of control files" "ls fonts/*flc"
 run_test "uskata control file" "printf 'ABCDE'|$CMD -fbanner -Cuskata"
 run_test "jis0201 control file" "printf '\261\262\263\264\265'|$CMD -fbanner -Cjis0201"
 run_test "right-to-left smushing with JavE font" "$cmd -f tests/flowerpower -R"
+run_test "test arguments" "$CMD this   is 'a  test'"
 
 rm -f "$OUTPUT"
 
