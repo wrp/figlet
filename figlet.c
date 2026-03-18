@@ -1061,10 +1061,9 @@ inchr theord;
 
 /*
  * Allocate memory, initialize variables, and read in the font.
- * Called near beginning of main().
  */
 void
-readfont(void)
+readfont(const struct args *A)
 {
   int i,row,numsread;
   inchr theord;
@@ -1863,7 +1862,7 @@ main(int argc, char **argv)
 	Myargv = argv;
 	getparams(argc, argv, args);
 	readcontrolfiles(args);
-  readfont();
+	readfont(args);
   linealloc();
 
   wordbreakmode = 0;
