@@ -169,9 +169,10 @@ struct args {
 	int deutschflag;
 	char *fontdirname;
 	char *fontname;
+	int justification;
 };
 
-int justification,paragraphflag,right2left,multibyte;
+int paragraphflag,right2left,multibyte;
 int read_from_args(void);
 int (*Agetchar)(void) = getchar;
 
@@ -846,7 +847,7 @@ getparams(int argc, char **argv, struct args *A)
   commandlistend = &commandlist;
   smushoverride = SMO_NO;
   A->deutschflag = 0;
-  justification = -1;
+  A->justification = -1;
   right2left = -1;
   paragraphflag = 0;
   infoprint = -1;
@@ -875,16 +876,16 @@ getparams(int argc, char **argv, struct args *A)
         right2left = 1;
         break;
       case 'x':
-        justification = -1;
+        A->justification = -1;
         break;
       case 'l':
-        justification = 0;
+        A->justification = 0;
         break;
       case 'c':
-        justification = 1;
+        A->justification = 1;
         break;
       case 'r':
-        justification = 2;
+        A->justification = 2;
         break;
       case 'p':
         paragraphflag = 1;
@@ -1064,7 +1065,7 @@ inchr theord;
  * Allocate memory, initialize variables, and read in the font.
  */
 void
-readfont(const struct args *A)
+readfont(struct args *A)
 {
   int i,row,numsread;
   inchr theord;
@@ -1148,8 +1149,8 @@ readfont(const struct args *A)
     right2left = ffright2left;
     }
 
-  if (justification<0) {
-    justification = 2*right2left;
+  if (A->justification<0) {
+    A->justification = 2*right2left;
     }
 
   /* Allocate "missing" character */
@@ -1438,11 +1439,11 @@ putstring(outchr *string, const struct args *A)
 		if (len > outputwidth - 1) {
 			len = outputwidth - 1;
 		}
-		if (justification > 0) {
+		if (A->justification > 0) {
 			int n = 1 + len;
 			while (n < outputwidth) {
 				putchar(' ');
-				n += 3 - justification;
+				n += 3 - A->justification;
 			}
 		}
 	}
