@@ -1480,17 +1480,13 @@ printline(void)
 }
 
 
-/****************************************************************************
-
-  splitline
-
-  Splits inchrline at the last word break (bunch of consecutive blanks).
-  Makes a new line out of the first part and prints it using
-  printline.  Makes a new line out of the second part and returns.
-
-****************************************************************************/
-
-void splitline()
+/*
+ * Split inchrline at the last word break (bunch of consecutive blanks).
+ * Make a new line out of the first part and print it using
+ * printline.  Make a new line out of the second part and return.
+ */
+static void
+splitline(const struct args *A)
 {
   int i,gotspace,lastspace,len1,len2;
   inchr *part1,*part2;
@@ -1941,7 +1937,7 @@ main(int argc, char **argv)
 
       else if (c==' ') {
         if (wordbreakmode==2) {
-          splitline();
+          splitline(args);
           }
         else {
           printline();
@@ -1951,7 +1947,7 @@ main(int argc, char **argv)
 
       else {
         if (wordbreakmode>=2) {
-          splitline();
+          splitline(args);
           }
         else {
           printline();
