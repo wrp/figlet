@@ -633,6 +633,19 @@ FIGopen(const char *name, const char *suffix, const struct args *A)
   return Zopen(fontpath,"rb");
 }
 
+static void
+new_command(int command, inchr rangelo, inchr rangehi, inchr offset)
+{
+        struct cm *p;
+        *commandlistend = p = myalloc(sizeof *p);
+        p->command = command;
+        p->rangelo = rangelo;
+        p->rangehi = rangehi;
+        p->offset = offset;
+        p->next = NULL;
+        commandlistend = &p->next;
+}
+
 /*
  * Allocate memory and read in the given control file.
  */
@@ -655,10 +668,7 @@ readcontrol(const char *controlname, const struct args *A)
 		exit(1);
 	}
 
-  (*commandlistend) = myalloc(sizeof **commandlistend);
-  (*commandlistend)->command = 0; /* Begin with a freeze command */
-  commandlistend = &(*commandlistend)->next;
-  (*commandlistend) = NULL;
+  new_command(0, 0, 0, 0); /* Begin with a freeze command */
 
   while(command=Zgetc(controlfile),command!=EOF) {
     switch (command) {
@@ -675,16 +685,7 @@ readcontrol(const char *controlname, const struct args *A)
         skipws(controlfile);
         offset=readTchar(controlfile)-firstch;
         skiptoeol(controlfile);
-        {
-        struct cm *p;
-        *commandlistend = p = myalloc(sizeof **commandlistend);
-        p->command = 1;
-        p->rangelo = firstch;
-        p->rangehi = lastch;
-        p->offset = offset;
-        p->next = NULL;
-        commandlistend = &p->next;
-        }
+	new_command(1, firstch, lastch, offset);
         break;
       case '0': case '1': case '2': case '3': case '4':
       case '5': case '6': case '7': case '8': case '9':
@@ -697,20 +698,11 @@ readcontrol(const char *controlname, const struct args *A)
 	offset=lastch-firstch;
         lastch=firstch;
         skiptoeol(controlfile);
-        (*commandlistend) = myalloc(sizeof **commandlistend);
-        (*commandlistend)->command = 1;
-        (*commandlistend)->rangelo = firstch;
-        (*commandlistend)->rangehi = lastch;
-        (*commandlistend)->offset = offset;
-        commandlistend = &(*commandlistend)->next;
-        (*commandlistend) = NULL;
+	new_command(1, firstch, lastch, offset);
         break;
       case 'f': /* freeze */
         skiptoeol(controlfile);
-        (*commandlistend) = myalloc(sizeof **commandlistend);
-        (*commandlistend)->command = 0;
-        commandlistend = &(*commandlistend)->next;
-        (*commandlistend) = NULL;
+	new_command(0, 0, 0, 0);
         break;
       case 'b': /* DBCS input mode */
         multibyte = 1;
