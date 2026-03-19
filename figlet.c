@@ -1489,6 +1489,12 @@ splitline(const struct args *A)
 
 /*
  * Execute re-mapping commands from control files.
+ *
+ * TODO: rework this entire mess.  Currently, we allocate
+ * space for names (and leak the memory), and then read the
+ * mappings into separate commands.  There is no need for that.
+ * Just read all the mappings into one list, and structure it.
+ * And fix the memory leak.  But get some testing in place first.
  */
 static inchr
 handlemapping(inchr c)
