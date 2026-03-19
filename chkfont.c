@@ -41,8 +41,7 @@ int bigcodetagwarn,deutschcodetagwarn,asciicodetagwarn;
 int codetagcnt;
 int gone;
 
-void weregone(really)
-int really;
+void weregone(int really)
 {
 if (!really && 2*ec+wc<=40) {
   return;
@@ -63,8 +62,7 @@ printf("------------------------------------------------------------------------
 gone=1;
 }
 
-char *my_alloc(size)
-int size;
+char *my_alloc(int size)
 {
 char *ptr;
 
@@ -76,9 +74,8 @@ if (ptr==NULL) {
 return(ptr);
 }
 
-int badsuffix(path,suffix)
-char *path;
-char *suffix;
+int
+badsuffix(char *path, char *suffix)
 {
   char ucsuffix[10];
   char *s;
@@ -457,9 +454,8 @@ weregone(1); if (gone) return;
 }
 
 
-int main(argc,argv)
-int argc;
-char *argv[];
+int
+main(int argc, char **argv)
 {
 int arg;
 
