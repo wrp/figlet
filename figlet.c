@@ -217,7 +217,8 @@ int charheight;
 
 ****************************************************************************/
 
-int get_columns()
+int
+get_columns(void)
 {
   struct winsize ws;
   int fd,result;
@@ -253,8 +254,8 @@ myalloc(size_t size)
 
 ****************************************************************************/
 
-int hasdirsep(s1)
-char *s1;
+int
+hasdirsep(const char *s1)
 {
   if (strchr(s1, DIRSEP)) return 1;
   else if (strchr(s1, DIRSEP2)) return 1;
@@ -269,9 +270,8 @@ char *s1;
 
 ****************************************************************************/
 
-int suffixcmp(s1, s2)
-char *s1;
-char *s2;
+int
+suffixcmp(const char *s1, const char *s2)
 {
   int len1, len2;
 
@@ -295,8 +295,8 @@ char *s2;
 
 ****************************************************************************/
 
-void skiptoeol(fp)
-ZFILE *fp;
+void
+skiptoeol(ZFILE *fp)
 {
   int dummy;
 
@@ -319,10 +319,8 @@ ZFILE *fp;
 
 ****************************************************************************/
 
-char *myfgets(line,maxlen,fp)
-char *line;
-int maxlen;
-ZFILE *fp;
+char *
+myfgets(char *line, int maxlen, ZFILE *fp)
 {
   int c = 0;
   char *p;
@@ -424,8 +422,8 @@ readmagic(ZFILE *fp, char *magic)
   Skips whitespace characters from a stream.
 
 ****************************************************************************/
-void skipws(fp)
-ZFILE *fp;
+void
+skipws(ZFILE *fp)
 {
   int c;
   while (c=Zgetc(fp),isascii(c)&&isspace(c)) ;
@@ -440,9 +438,8 @@ ZFILE *fp;
   "0x" or "0X" for hexadecimal.  Ignores leading whitespace.
 
 ****************************************************************************/
-void readnum(fp,nump)
-ZFILE *fp;
-inchr *nump;
+void
+readnum(ZFILE *fp, inchr *nump)
 {
   int acc = 0;
   char *p;
@@ -499,8 +496,8 @@ inchr *nump;
 
 ****************************************************************************/
 
-inchr readTchar(fp)
-ZFILE *fp;
+inchr
+readTchar(ZFILE *fp)
 {
   inchr thechar;
   char next;
@@ -548,8 +545,8 @@ ZFILE *fp;
 
 ****************************************************************************/
 
-inchr charsetname(fp)
-ZFILE *fp;
+inchr
+charsetname(ZFILE *fp)
 {
   inchr result;
 
@@ -570,9 +567,8 @@ ZFILE *fp;
 
 ****************************************************************************/
 
-void charset(n, controlfile)
-int n;
-ZFILE *controlfile;
+void
+charset(int n, ZFILE *controlfile)
 {
   int ch;
 
@@ -982,9 +978,8 @@ clearline(void)
 
 ****************************************************************************/
 
-void readfontchar(file,theord)
-ZFILE *file;
-inchr theord;
+void
+readfontchar(ZFILE *file, inchr theord)
 {
   int row,k;
   char templine[MAXLEN+1];
@@ -1166,8 +1161,8 @@ linealloc(void)
 
 ****************************************************************************/
 
-void getletter(c)
-inchr c;
+void
+getletter(inchr c)
 {
   struct fc *charptr;
 
@@ -1205,8 +1200,8 @@ inchr c;
 
 ****************************************************************************/
 
-outchr smushem(lch,rch)
-outchr lch,rch;
+outchr
+smushem(outchr lch, outchr rch)
 {
   if (lch==' ') return rch;
   if (rch==' ') return lch;
@@ -1344,8 +1339,8 @@ int smushamt()
 
 ****************************************************************************/
 
-int addchar(c)
-inchr c;
+int
+addchar(inchr c)
 {
   int smushamount,row,k,column;
   outchr *templine;
@@ -1691,8 +1686,8 @@ inchr iso2022()
 inchr getinchr_buffer;
 int getinchr_flag;
 
-inchr ungetinchr(c)
-inchr c;
+inchr
+ungetinchr(inchr c)
 {
   getinchr_buffer = c;
   getinchr_flag = 1;
@@ -1719,7 +1714,8 @@ inchr c;
 
 *****************************************************************************/
 
-inchr getinchr()
+inchr
+getinchr(void)
 {
   int ch, ch2, ch3, ch4, ch5, ch6;
 
