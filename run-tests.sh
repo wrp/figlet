@@ -82,7 +82,12 @@ run_test "right-to-left smushing with JavE font" "$cmd -f tests/flowerpower -R"
 run_test "test arguments" "$CMD this   is 'a  test'"
 run_test "test arg with newline" "$CMD this is '' 'a   test'"
 
-rm -f "$OUTPUT"
+trap 'rm -f test-gtoh.flc test-htoi.flc $OUTPUT' 0
+echo '0x67 0x68' > test-gtoh.flc
+echo '0x68 0x69' > test-htoi.flc
+run_test "test translation" "$CMD -C ./test-gtoh gabefg"
+run_test "test translation" "$CMD -C ./test-gtoh -C ./test-htoi gabefg"
+run_test "test translation" "$CMD -C ./test-htoi -C ./test-gtoh gabefg"
 
 echo
 if [ $result -ne 0 ]; then
