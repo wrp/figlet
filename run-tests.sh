@@ -85,11 +85,11 @@ run_test "test arg with newline" "$CMD this is '' 'a   test'"
 trap 'rm -f test-gtoh.flc test-htoi.flc test.flc $OUTPUT' 0
 echo '0x67 0x68' > test-gtoh.flc
 echo '0x68 0x69' > test-htoi.flc
-run_test "test translation" "$CMD -C ./test-gtoh gabefg"
-run_test "test translation paired gtoi" "$CMD -C ./test-gtoh -C ./test-htoi gabefg"
-run_test "test translation paired gtoh" "$CMD -C ./test-htoi -C ./test-gtoh gabefg"
+run_test "test single translation" "$CMD -C ./test-gtoh gabefg"
+run_test "test paired translation gtoi" "$CMD -C ./test-gtoh -C ./test-htoi gabefg"
+run_test "test paired translation gtoh" "$CMD -C ./test-htoi -C ./test-gtoh gabefg"
 
-echo 't a-c m' > test.flc
+echo 't a-c m' > test.flc  # Translate a-c to m-o
 run_test "test t command" "$CMD -C ./test abcde"
 
 echo
