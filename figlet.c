@@ -757,7 +757,7 @@ readcontrol(const char *controlname, const struct args *A)
 
 
 /*
- * Read in the controlfiles named in cfilelist.
+ * Read all the controlfiles.
  */
 static void
 readcontrolfiles(const struct args *A)
