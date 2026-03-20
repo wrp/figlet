@@ -1028,7 +1028,7 @@ readfont(struct args *A)
   if (myfgets(fileline,MAXLEN,fontfile)==NULL) {
     fileline[0] = '\0';
     }
-  if (MYSTRLEN(fileline)>0 ? fileline[MYSTRLEN(fileline)-1]!='\n' : 0) {
+  if (MYSTRLEN(fileline) > 0 && fileline[MYSTRLEN(fileline)-1] != '\n') {
     skiptoeol(fontfile);
     }
   numsread = sscanf(fileline,"%*c%c %d %*d %d %d %d %d %d",
