@@ -304,34 +304,34 @@ skiptoeol(ZFILE *fp)
 }
 
 
-/****************************************************************************
-
-  myfgets
-
-  Local version of fgets.  Handles \r, \n, and \r\n terminators.
-
-****************************************************************************/
-
+/*
+ * Local version of fgets.  Handles \r, \n, and \r\n terminators,
+ * and returns pointer to nul-terminator at end of string.
+ * WARNING: this is not like normal fgets.  It writes up to siz + 1 bytes
+ * into p.
+ */
 char *
-myfgets(char *line, int maxlen, ZFILE *fp)
+myfgets(char *p, size_t siz, ZFILE *fp)
 {
-  int c = 0;
-  char *p;
+	int c;
+	char *e = p + siz;
 
-  p = line;
-  while((c=Zgetc(fp))!=EOF&&maxlen) {
-    *p++ = c;
-    maxlen--;
-    if (c=='\n') break;
-    if (c=='\r') {
-      c = Zgetc(fp);
-      if (c != EOF && c != '\n') Zungetc(c,fp);
-      *(p-1) = '\n';
-      break;
-      }
-    }
-  *p = 0;
-  return (c==EOF) ? NULL : line;
+	while( p < e && (c = Zgetc(fp)) != EOF) {
+		*p++ = c;
+		if (c == '\n') {
+			break;
+		}
+		if (c == '\r') {
+			c = Zgetc(fp);
+			if ( c != EOF && c != '\n' ) {
+				Zungetc(c, fp);
+			}
+			*(p-1) = '\n';
+			break;
+		}
+	}
+	*p = 0;
+	return c == EOF ? NULL : p;
 }
 
 
