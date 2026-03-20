@@ -1005,6 +1005,7 @@ readfont(struct args *A)
   int smush,smush2;
   char fileline[MAXLEN+1],magicnum[5];
   ZFILE *fontfile;
+  char *end;
 
   fontfile = FIGopen(A->fontname,FONTFILESUFFIX, A);
 #ifdef TLF_FONTS
@@ -1025,12 +1026,11 @@ readfont(struct args *A)
 	}
 
   readmagic(fontfile,magicnum);
-  if (myfgets(fileline,MAXLEN,fontfile)==NULL) {
-    fileline[0] = '\0';
-    }
-  if (MYSTRLEN(fileline) > 0 && fileline[MYSTRLEN(fileline)-1] != '\n') {
-    skiptoeol(fontfile);
-    }
+	if ( (end = myfgets(fileline,MAXLEN,fontfile)) == NULL) {
+		fileline[0] = '\0';
+	} else if (end > fileline && end[-1] != '\n') {
+		skiptoeol(fontfile);
+	}
   numsread = sscanf(fileline,"%*c%c %d %*d %d %d %d %d %d",
     &hardblank,&charheight,&maxlen,&smush,&cmtlines,
     &ffright2left,&smush2);
