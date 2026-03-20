@@ -1100,7 +1100,7 @@ readfont(struct args *A)
   for (theord=0;theord<=6;theord++) {
     readfontchar(fontfile,deutsch[theord]);
     }
-  while (myfgets(fileline,maxlen+1,fontfile)==NULL?0:
+  while (myfgets(fileline,maxlen,fontfile)==NULL?0:
     sscanf(fileline,"%li",&theord)==1) {
     readfontchar(fontfile,theord);
     }
