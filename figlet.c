@@ -141,11 +141,6 @@ int outlinelen;
 
 ****************************************************************************/
 
-struct cfn {
-	char *name;
-	struct cfn *next;
-};
-
 struct cm {
   int command;
   inchr rangelo;
@@ -166,8 +161,6 @@ struct args {
 	char *fontdirname;
 	char *fontname;
 	int justification;
-	struct cfn *cfilelist;
-	struct cfn **cfilelistend;
 };
 
 int paragraphflag,right2left,multibyte;
@@ -752,36 +745,21 @@ readcontrol(const char *controlname, const struct args *A)
 }
 
 
-/*
- * Read all the controlfiles.
- */
-static void
-readcontrolfiles(const struct args *A)
-{
-	struct cfn *cfnptr;
-
-	for (cfnptr = A->cfilelist; cfnptr != NULL; cfnptr = cfnptr->next) {
-		readcontrol(cfnptr->name, A);
-	}
-}
-
 
 /*
  * Clear the control file list.  Assumes name does not need freeing.
  */
 static void
-clearcfilelist(struct args *args)
+clearcontrols(struct args *args)
 {
-  struct cfn *cfnptr1,*cfnptr2;
-
-  cfnptr1 = args->cfilelist;
-  while (cfnptr1 != NULL) {
-    cfnptr2 = cfnptr1->next;
-    free(cfnptr1);
-    cfnptr1 = cfnptr2;
-    }
-  args->cfilelist = NULL;
-  args->cfilelistend = &args->cfilelist;
+	struct cm *p = commandlist;
+	while (p != NULL) {
+		struct cm *next = p->next;
+		free(p);
+		p = next;
+	}
+	commandlist = NULL;
+	commandlistend = &commandlist;
 }
 
 
@@ -801,8 +779,6 @@ getparams(int argc, char **argv, struct args *A)
     A->fontdirname = env;
     }
   A->fontname = DEFAULTFONTFILE;
-  A->cfilelist = NULL;
-  A->cfilelistend = &A->cfilelist;
   commandlist = NULL;
   commandlistend = &commandlist;
   smushoverride = SMO_NO;
@@ -924,13 +900,10 @@ getparams(int argc, char **argv, struct args *A)
         if (suffixcmp(controlname, CONTROLFILESUFFIX)) {
           controlname[MYSTRLEN(controlname)-CSUFFIXLEN] = '\0';
           }
-        *A->cfilelistend = myalloc(sizeof **A->cfilelistend);
-        (*A->cfilelistend)->name = controlname;
-        A->cfilelistend = &(*A->cfilelistend)->next;
-        *A->cfilelistend = NULL;
+        readcontrol(controlname, A);
         break;
       case 'N':
-        clearcfilelist(A);
+        clearcontrols(A);
         multibyte = 0;
         gn[0] = 0;
         gn[1] = 0x80;
@@ -1809,7 +1782,6 @@ main(int argc, char **argv)
 
 	Myargv = argv;
 	getparams(argc, argv, args);
-	readcontrolfiles(args);
 	readfont(args);
   linealloc();
 
