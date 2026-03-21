@@ -24,6 +24,7 @@
 #define DEFAULTFONTFILE "standard.flf"
 #endif
 
+#include <assert.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -1031,9 +1032,18 @@ readfont(struct args *A)
 	} else if (end > fileline && end[-1] != '\n') {
 		skiptoeol(fontfile);
 	}
-  numsread = sscanf(fileline,"%*c%c %d %*d %d %d %d %d %d",
-    &hardblank,&charheight,&maxlen,&smush,&cmtlines,
-    &ffright2left,&smush2);
+	assert(INT_MAX > 1E8);
+	numsread = sscanf(
+		fileline,
+		"%*c%c %8d %*8d %8d %8d %8d %8d %8d",
+		&hardblank,
+		&charheight,
+		&maxlen,
+		&smush,
+		&cmtlines,
+		&ffright2left,
+		&smush2
+	);
 
   if (maxlen > MAXLEN) {
     fprintf(stderr,"%s: character is too wide\n", A->fontname);
