@@ -6,7 +6,6 @@
 #endif
 
 #define DATE "20 Feb 1996"
-#define VERSION "2.2"
 
 /*
    chkfont
