@@ -47,8 +47,6 @@
 
 #include "zipio.h"     /* Package for reading compressed files */
 
-#define MYSTRLEN(x) ((int)strlen(x)) /* Eliminate ANSI problem */
-
 #define DIRSEP '/'
 #define DIRSEP2 '\\'
 /* Leave alone for Unix and MS-DOS/Windows!
@@ -56,9 +54,9 @@ Note: '/' also used in filename in get_columns(). */
 
 #define FONTFILESUFFIX ".flf"
 #define FONTFILEMAGICNUMBER "flf2"
-#define FSUFFIXLEN MYSTRLEN(FONTFILESUFFIX)
+#define FSUFFIXLEN strlen(FONTFILESUFFIX)
 #define CONTROLFILESUFFIX ".flc"
-#define CSUFFIXLEN MYSTRLEN(CONTROLFILESUFFIX)
+#define CSUFFIXLEN strlen(CONTROLFILESUFFIX)
 #define DEFAULTCOLUMNS 80
 #define MAXLEN 255     /* Maximum character width */
 
@@ -66,7 +64,7 @@ Note: '/' also used in filename in get_columns(). */
 #ifdef TLF_FONTS
 #define TOILETFILESUFFIX ".tlf"
 #define TOILETFILEMAGICNUMBER "tlf2"
-#define TSUFFIXLEN MYSTRLEN(TOILETFILESUFFIX)
+#define TSUFFIXLEN strlen(TOILETFILESUFFIX)
 
 int toiletfont;	/* true if font is a TOIlet TLF font */
 #endif
@@ -116,7 +114,7 @@ typedef wchar_t outchr; /* "char" written to stdout */
 #define ISSPACE(x) iswspace(x)
 #else
 typedef char outchr; /* "char" written to stdout */
-#define STRLEN(x) MYSTRLEN(x)
+#define STRLEN(x) strlen(x)
 #define STRCPY(x,y) strcpy((x),(y))
 #define STRCAT(x,y) strcat((x),(y))
 #define ISSPACE(x) isspace(x)
@@ -269,8 +267,8 @@ suffixcmp(const char *s1, const char *s2)
 {
   int len1, len2;
 
-  len1 = MYSTRLEN(s1);
-  len2 = MYSTRLEN(s2);
+  len1 = strlen(s1);
+  len2 = strlen(s2);
   if (len2 > len1) return 0;
   s1 += len1 - len2;
   while (*s1) {
@@ -888,18 +886,18 @@ getparams(int argc, char **argv, struct args *A)
       case 'f':
         A->fontname = optarg;
         if (suffixcmp(A->fontname,FONTFILESUFFIX)) {
-          A->fontname[MYSTRLEN(A->fontname)-FSUFFIXLEN] = '\0';
+          A->fontname[strlen(A->fontname)-FSUFFIXLEN] = '\0';
           }
 #ifdef TLF_FONTS
         else if (suffixcmp(A->fontname,TOILETFILESUFFIX)) {
-          A->fontname[MYSTRLEN(A->fontname)-TSUFFIXLEN] = '\0';
+          A->fontname[strlen(A->fontname)-TSUFFIXLEN] = '\0';
           }
 #endif
         break;
       case 'C':
         controlname = optarg;
         if (suffixcmp(controlname, CONTROLFILESUFFIX)) {
-          controlname[MYSTRLEN(controlname)-CSUFFIXLEN] = '\0';
+          controlname[strlen(controlname)-CSUFFIXLEN] = '\0';
           }
         readcontrol(controlname, A);
         break;
