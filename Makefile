@@ -14,6 +14,6 @@ install: builddir
 check: builddir
 	meson test -C builddir
 
-
+.PHONY: clean
 clean:
 	rm -rf builddir
