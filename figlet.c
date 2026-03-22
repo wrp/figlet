@@ -34,7 +34,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>     /* Needed for get_columns */
 
-#if defined(unix) || defined(__unix__) || defined(__APPLE__)
+#if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #include <sys/ioctl.h> /* Needed for get_columns */
 #endif

@@ -11,6 +11,11 @@ add_project_arguments('-DDEFAULTFONTDIR="' + get_option('prefix') + '/share/figl
 add_project_arguments('-DDEFAULTFONTFILE="standard"', language: ['c'])
 add_project_arguments('-DTLF_FONTS', language: ['c'])
 
+
+if meson.get_compiler('c').has_header('unistd.h')
+	add_project_arguments('-DHAVE_UNISTD_H', language: ['c'])
+endif
+
 message('Numeric version: ' + version_int)
 
 
