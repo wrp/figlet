@@ -444,11 +444,8 @@ readnum(ZFILE *fp, inchr *nump)
   c = Zgetc(fp);
   if (c=='-') {
     sign = -1;
+    c = Zgetc(fp);
     }
-  else {
-    Zungetc(c,fp);
-    }
-  c = Zgetc(fp);
   if (c=='0') {
      c = Zgetc(fp);
      if (c=='x'||c=='X') {
