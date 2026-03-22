@@ -1,4 +1,8 @@
 
+.PHONY: all
+all: builddir
+	meson compile -C builddir $${V+--verbose}
+
 builddir:
 	meson setup builddir
 
