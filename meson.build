@@ -23,10 +23,10 @@ install_data('figlist', 'figlist', install_dir: 'bin')
 install_man('figlet.6', 'chkfont.6', 'figlist.6', 'showfigfonts.6')
 
 test('run-test', files('run-tests.sh'),
-	workdir: meson.source_root(),
+	workdir: meson.project_source_root(),
 	depends: figlet,
 	env: [
-		'FIGLET_FONTDIR=' + meson.source_root() + '/fonts',
-		'CMD=' + meson.build_root() + '/figlet',
+		'FIGLET_FONTDIR=' + meson.project_source_root() + '/fonts',
+		'CMD=' + meson.project_build_root() + '/figlet',
 	],
 )
