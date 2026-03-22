@@ -14,8 +14,6 @@
  */
 
 #define DATE "31 May 2012"
-#define VERSION "2.2.5"
-#define VERSION_INT 20205
 
 /* FIGlet (Frank, Ian & Glenn's Letters) */
 
@@ -378,7 +376,7 @@ printinfo(int infonum, const char *name, const struct args *A)
       printusage(name);
       break;
     case 1: /* Version (integer) */
-      printf("%d\n",VERSION_INT);
+      printf("%s\n",VERSION_INT);
       break;
     case 2: /* Font directory */
       printf("%s\n", A->fontdirname);
