@@ -1,15 +1,17 @@
-/****************************************************************************
-
-  FIGlet Copyright 1991, 1993, 1994 Glenn Chappell and Ian Chai
-  FIGlet Copyright 1996, 1997, 1998, 1999, 2000, 2001 John Cowan
-  FIGlet Copyright 2002 Christiaan Keet
-  FIGlet Copyright 2011, 2012 Claudio Matsuoka
-  Portions written by Paul Burton and Christiaan Keet
-  Internet: <info@figlet.org>
-  FIGlet, along with the various FIGlet fonts and documentation, is
-    copyrighted under the provisions of the New BSD License (3-clause)
-    (as listed in the file "LICENSE" which is included in this package)
-****************************************************************************/
+/*
+ * FIGlet Copyright 1991, 1993, 1994 Glenn Chappell and Ian Chai
+ * FIGlet Copyright 1996, 1997, 1998, 1999, 2000, 2001 John Cowan
+ * FIGlet Copyright 2002 Christiaan Keet
+ * FIGlet Copyright 2011, 2012 Claudio Matsuoka
+ * Portions written by Paul Burton and Christiaan Keet
+ * Internet: <info@figlet.org>
+ * FIGlet, along with the various FIGlet fonts and documentation, is
+ *   copyrighted under the provisions of the New BSD License (3-clause)
+ *   (as listed in the file "LICENSE" which is included in this package)
+ */
+/* TODO: FIGLET_PATH should be colon separated list of directories and/or
+ *       archive files that will be searched for fonts.
+ */
 
 #define DATE "31 May 2012"
 #define VERSION "2.2.5"
