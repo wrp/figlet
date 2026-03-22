@@ -15,7 +15,7 @@ message('Numeric version: ' + version_int)
 
 
 source_files = ['figlet.c', 'zipio.c', 'crc.c', 'inflate.c', 'utf8.c']
-executable('figlet', sources: source_files, install: true)
+figlet = executable('figlet', sources: source_files, install: true)
 executable('chkfont', sources: 'chkfont.c', install: true)
 install_data('showfigfonts', 'showfigfonts', install_dir: 'bin')
 install_data('figlist', 'figlist', install_dir: 'bin')
@@ -24,5 +24,9 @@ install_man('figlet.6', 'chkfont.6', 'figlist.6', 'showfigfonts.6')
 
 test('run-test', files('run-tests.sh'),
 	workdir: meson.source_root(),
-	env: ['FIGLET_FONTDIR=' + meson.source_root() + '/fonts']
+	depends: figlet,
+	env: [
+		'FIGLET_FONTDIR=' + meson.source_root() + '/fonts',
+		'CMD=' + meson.build_root() + '/figlet',
+	],
 )

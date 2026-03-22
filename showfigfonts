@@ -10,8 +10,7 @@
 #
 # Usage: showfigfonts [ -d directory ] [ word ]
 
-DIR=`dirname $0`
-FIGLET=$DIR/figlet
+FIGLET=$CMD
 
 # Get figlet version
 FIGLETVERSION=`$FIGLET -I1 2>/dev/null`
