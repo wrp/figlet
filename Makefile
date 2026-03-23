@@ -1,17 +1,17 @@
 
 .PHONY: all
-all: builddir
+all: builddir/build.ninja
 	meson compile -C builddir $${V+--verbose}
 
-builddir:
+builddir/build.ninja:
 	meson setup builddir
 
 .PHONY: install
-install: builddir
+install: builddir/build.ninja
 	meson install -C builddir
 
 .PHONY: check
-check: builddir
+check: builddir/build.ninja
 	meson test -C builddir
 
 .PHONY: clean
