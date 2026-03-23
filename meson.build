@@ -9,7 +9,6 @@ version_int = meson.project_version().replace('.', '0')
 add_project_arguments('-DVERSION_INT="' + version_int + '"', language: ['c'])
 add_project_arguments('-DDEFAULTFONTDIR="' + get_option('prefix') + '/share/figlet"', language: ['c'])
 add_project_arguments('-DDEFAULTFONTFILE="standard"', language: ['c'])
-add_project_arguments('-DTLF_FONTS', language: ['c'])
 
 
 if meson.get_compiler('c').has_header('unistd.h')
@@ -18,6 +17,10 @@ endif
 
 message('Numeric version: ' + version_int)
 
+if get_option('toilet') == 'enabled'
+	add_project_arguments('-DTLF_FONTS', language: ['c'])
+	message('toilet fonts enabled')
+endif
 
 source_files = ['figlet.c', 'zipio.c', 'crc.c', 'inflate.c', 'utf8.c']
 figlet = executable('figlet', sources: source_files, install: true)
