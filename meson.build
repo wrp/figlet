@@ -1,7 +1,10 @@
 
 project('figlet', 'c',
+	meson_version : '>= 1.3.0',
+	default_options : ['warning_level=3'],
 	version: run_command('git', 'describe', '--tags', '--always', '--dirty',
-		check: true).stdout().strip())
+		check: true).stdout().strip()
+)
 
 add_project_arguments('-DVERSION="' + meson.project_version() + '"', language: ['c'])
 
