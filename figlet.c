@@ -134,21 +134,18 @@ outchr **outputline;   /* Alloc'd char outputline[charheight][outlinelenlimit+1]
 int outlinelen;
 
 
-/****************************************************************************
-
-  Globals dealing with command file storage
-
-****************************************************************************/
-
 struct cm {
-  int command;
-  inchr rangelo;
-  inchr rangehi;
-  inchr offset;
-  struct cm *next;
-  };
+	int command;
+	inchr rangelo;
+	inchr rangehi;
+	inchr offset;
+	struct cm *next;
+};
 
-struct cm *commandlist,**commandlistend;
+struct state {
+	struct cm *commandlist;
+	struct cm **commandlistend;
+};
 
 /****************************************************************************
 
@@ -619,23 +616,23 @@ FIGopen(const char *name, const char *suffix, const struct args *A)
 }
 
 static void
-new_command(int command, inchr rangelo, inchr rangehi, inchr offset)
+new_command(struct state *S, int command, inchr lo, inchr hi, inchr offset)
 {
-        struct cm *p;
-        *commandlistend = p = myalloc(sizeof *p);
-        p->command = command;
-        p->rangelo = rangelo;
-        p->rangehi = rangehi;
-        p->offset = offset;
-        p->next = NULL;
-        commandlistend = &p->next;
+	struct cm *p;
+	*S->commandlistend = p = myalloc(sizeof *p);
+	p->command = command;
+	p->rangelo = lo;
+	p->rangehi = hi;
+	p->offset = offset;
+	p->next = NULL;
+	S->commandlistend = &p->next;
 }
 
 /*
  * Allocate memory and read in the given control file.
  */
 static void
-readcontrol(const char *controlname, const struct args *A)
+readcontrol(struct state *S, const char *controlname, const struct args *A)
 {
   inchr firstch,lastch;
   char dashcheck;
@@ -653,7 +650,7 @@ readcontrol(const char *controlname, const struct args *A)
 		exit(1);
 	}
 
-  new_command(0, 0, 0, 0); /* Begin with a freeze command */
+  new_command(S, 0, 0, 0, 0); /* Begin with a freeze command */
 
   while(command=Zgetc(controlfile),command!=EOF) {
     switch (command) {
@@ -670,7 +667,7 @@ readcontrol(const char *controlname, const struct args *A)
         skipws(controlfile);
         offset=readTchar(controlfile)-firstch;
         skiptoeol(controlfile);
-	new_command(1, firstch, lastch, offset);
+	new_command(S, 1, firstch, lastch, offset);
         break;
       case '0': case '1': case '2': case '3': case '4':
       case '5': case '6': case '7': case '8': case '9':
@@ -683,11 +680,11 @@ readcontrol(const char *controlname, const struct args *A)
 	offset=lastch-firstch;
         lastch=firstch;
         skiptoeol(controlfile);
-	new_command(1, firstch, lastch, offset);
+	new_command(S, 1, firstch, lastch, offset);
         break;
       case 'f': /* freeze */
         skiptoeol(controlfile);
-	new_command(0, 0, 0, 0);
+	new_command(S, 0, 0, 0, 0);
         break;
       case 'b': /* DBCS input mode */
         multibyte = 1;
@@ -746,16 +743,16 @@ readcontrol(const char *controlname, const struct args *A)
  * Clear the control file list.  Assumes name does not need freeing.
  */
 static void
-clearcontrols(struct args *args)
+clearcontrols(struct state *S)
 {
-	struct cm *p = commandlist;
+	struct cm *p = S->commandlist;
 	while (p != NULL) {
 		struct cm *next = p->next;
 		free(p);
 		p = next;
 	}
-	commandlist = NULL;
-	commandlistend = &commandlist;
+	S->commandlist = NULL;
+	S->commandlistend = &S->commandlist;
 }
 
 
@@ -763,7 +760,7 @@ clearcontrols(struct args *args)
  * Handle command-line arguments
  */
 static void
-getparams(int argc, char **argv, struct args *A)
+getparams(struct state *S, int argc, char **argv, struct args *A)
 {
   int c;
   int columns,infoprint;
@@ -775,8 +772,6 @@ getparams(int argc, char **argv, struct args *A)
     A->fontdirname = env;
     }
   A->fontname = DEFAULTFONTFILE;
-  commandlist = NULL;
-  commandlistend = &commandlist;
   smushoverride = SMO_NO;
   A->deutschflag = 0;
   A->justification = -1;
@@ -896,10 +891,10 @@ getparams(int argc, char **argv, struct args *A)
         if (suffixcmp(controlname, CONTROLFILESUFFIX)) {
           controlname[strlen(controlname)-CSUFFIXLEN] = '\0';
           }
-        readcontrol(controlname, A);
+        readcontrol(S, controlname, A);
         break;
       case 'N':
-        clearcontrols(A);
+        clearcontrols(S);
         multibyte = 0;
         gn[0] = 0;
         gn[1] = 0x80;
@@ -1470,9 +1465,9 @@ splitline(const struct args *A)
  * And fix the memory leak.  But get some testing in place first.
  */
 static inchr
-handlemapping(inchr c)
+handlemapping(const struct state *S, inchr c)
 {
-	struct cm *p = commandlist;
+	struct cm *p = S->commandlist;
 
 	while (p != NULL) {
 		if (p->command && c >= p->rangelo && c <= p->rangehi) {
@@ -1778,6 +1773,7 @@ getinchr(void)
 int
 main(int argc, char **argv)
 {
+	struct state S[1];
 	struct args args[1] = {{0}};
 	inchr c,c2;
 	int i;
@@ -1785,8 +1781,11 @@ main(int argc, char **argv)
 	int wordbreakmode;  /* (1) */
 	int char_not_added;
 
+	S->commandlist = NULL;
+	S->commandlistend = &S->commandlist;
+
 	Myargv = argv;
-	getparams(argc, argv, args);
+	getparams(S, argc, argv, args);
 	readfont(args);
   linealloc();
 
@@ -1814,7 +1813,7 @@ main(int argc, char **argv)
         }
       }
 
-    c = handlemapping(c);
+    c = handlemapping(S, c);
 
     if (isascii(c)&&isspace(c)) {
       c = (c=='\t'||c==' ') ? ' ' : '\n';
