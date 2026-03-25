@@ -70,12 +70,6 @@ int toiletfont;	/* true if font is a TOIlet TLF font */
 #endif
 
 
-/****************************************************************************
-
-  Globals dealing with chars that are read
-
-****************************************************************************/
-
 typedef long inchr; /* "char" read from stdin */
 
 inchr deutsch[7] = {196, 214, 220, 228, 246, 252, 223};
@@ -1668,6 +1662,19 @@ ungetinchr(inchr c)
   return c;
 }
 
+
+static inchr
+get_DBCS_char(void)
+{
+	int ch = Agetchar();
+	if ((ch >= 0x80 && ch <= 0x9F) ||
+		(ch >= 0xE0 && ch <= 0xEF))
+	{
+		ch = (ch << 8) + Agetchar();
+	}
+	return ch;
+}
+
 /*****************************************************************************
 
   getinchr
@@ -1698,16 +1705,9 @@ getinchr(void)
     return getinchr_buffer;
     }
 
-  switch(multibyte) {
-   case 0: /* single-byte */
-      return iso2022();
-   case 1: /* DBCS */
-     ch = Agetchar();
-     if ((ch >= 0x80 && ch <= 0x9F) ||
-         (ch >= 0xE0 && ch <= 0xEF)) {
-       ch = (ch << 8) + Agetchar();
-       }
-     return ch;
+	switch(multibyte) {
+	case 0: return iso2022();
+	case 1: return get_DBCS_char();
    case 2: /* UTF-8 */
       ch = Agetchar();
       if (ch < 0x80) return ch;  /* handles EOF, too */
