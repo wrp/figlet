@@ -78,9 +78,6 @@ int toiletfont;	/* true if font is a TOIlet TLF font */
 
 typedef long inchr; /* "char" read from stdin */
 
-inchr *inchrline;  /* Alloc'd inchr inchrline[inchrlinelenlimit+1]; */
-                   /* Note: not null-terminated. */
-int inchrlinelen,inchrlinelenlimit;
 inchr deutsch[7] = {196, 214, 220, 228, 246, 252, 223};
   /* Latin-1 codes for German letters, respectively:
      LATIN CAPITAL LETTER A WITH DIAERESIS = A-umlaut
@@ -145,6 +142,9 @@ struct cm {
 struct state {
 	struct cm *commandlist;
 	struct cm **commandlistend;
+	inchr *inchrline;
+	int inchrlinelen;
+	int inchrlinelenlimit;
 };
 
 /****************************************************************************
@@ -923,13 +923,13 @@ getparams(struct state *S, int argc, char **argv, struct args *A)
  * Clear both the input (inchrline) and output (outputline) storage.
  */
 void
-clearline(void)
+clearline(struct state *S)
 {
 	for (int i = 0; i < charheight; i += 1) {
 		outputline[i][0] = '\0';
 	}
 	outlinelen = 0;
-	inchrlinelen = 0;
+	S->inchrlinelen = 0;
 }
 
 
@@ -1112,16 +1112,17 @@ readfont(struct args *A)
  * Allocate & clear outputline, inchrline. Set inchrlinelenlimit.
  */
 void
-linealloc(void)
+linealloc(struct state *S)
 {
 	size_t n = outlinelenlimit + 1;
+	size_t m = S->inchrlinelenlimit + 1;
 	outputline = myalloc(charheight * sizeof *outputline);
 	for (int row = 0; row < charheight; row += 1) {
 		outputline[row] = myalloc(n * sizeof **outputline);
 	}
-	inchrlinelenlimit = outputwidth * 4 + 100;
-	inchrline = myalloc((inchrlinelenlimit + 1) * sizeof *inchrline);
-	clearline();
+	S->inchrlinelenlimit = outputwidth * 4 + 100;
+	S->inchrline = myalloc(m * sizeof *S->inchrline);
+	clearline(S);
 }
 
 
@@ -1313,7 +1314,7 @@ int smushamt()
 ****************************************************************************/
 
 int
-addchar(inchr c)
+addchar(struct state *S, inchr c)
 {
   int smushamount,row,k,column;
   outchr *templine;
@@ -1321,7 +1322,7 @@ addchar(inchr c)
   getletter(c);
   smushamount = smushamt();
   if (outlinelen+currcharwidth-smushamount>outlinelenlimit
-      ||inchrlinelen+1>inchrlinelenlimit) {
+      || S->inchrlinelen + 1 > S->inchrlinelenlimit) {
     return 0;
     }
 
@@ -1350,7 +1351,7 @@ addchar(inchr c)
     }
   free(templine);
   outlinelen = STRLEN(outputline[0]);
-  inchrline[inchrlinelen++] = c;
+  S->inchrline[S->inchrlinelen++] = c;
   return 1;
 }
 
@@ -1399,14 +1400,14 @@ putstring(outchr *string, const struct args *A)
 
 
 static void
-printline(const struct args *A)
+printline(struct state *S, const struct args *A)
 {
   int i;
 
   for (i=0;i<charheight;i++) {
     putstring(outputline[i], A);
     }
-  clearline();
+  clearline(S);
 }
 
 
@@ -1416,39 +1417,39 @@ printline(const struct args *A)
  * printline.  Make a new line out of the second part and return.
  */
 static void
-splitline(const struct args *A)
+splitline(struct state *S, const struct args *A)
 {
   int i,gotspace,lastspace,len1,len2;
   inchr *part1,*part2;
 
-  part1 = (inchr*)myalloc(sizeof(inchr)*(inchrlinelen+1));
-  part2 = (inchr*)myalloc(sizeof(inchr)*(inchrlinelen+1));
+  part1 = myalloc(sizeof(inchr)*(S->inchrlinelen+1));
+  part2 = myalloc(sizeof(inchr)*(S->inchrlinelen+1));
   gotspace = 0;
-  lastspace = inchrlinelen-1;
-  for (i=inchrlinelen-1;i>=0;i--) {
-    if (!gotspace && inchrline[i]==' ') {
+  lastspace = S->inchrlinelen-1;
+  for (i=S->inchrlinelen-1;i>=0;i--) {
+    if (!gotspace && S->inchrline[i]==' ') {
       gotspace = 1;
       lastspace = i;
       }
-    if (gotspace && inchrline[i]!=' ') {
+    if (gotspace && S->inchrline[i]!=' ') {
       break;
       }
     }
   len1 = i+1;
-  len2 = inchrlinelen-lastspace-1;
+  len2 = S->inchrlinelen-lastspace-1;
   for (i=0;i<len1;i++) {
-    part1[i] = inchrline[i];
+    part1[i] = S->inchrline[i];
     }
   for (i=0;i<len2;i++) {
-    part2[i] = inchrline[lastspace+1+i];
+    part2[i] = S->inchrline[lastspace+1+i];
     }
-  clearline();
+  clearline(S);
   for (i=0;i<len1;i++) {
-    addchar(part1[i]);
+    addchar(S, part1[i]);
     }
-  printline(A);
+  printline(S, A);
   for (i=0;i<len2;i++) {
-    addchar(part2[i]);
+    addchar(S, part2[i]);
     }
   free(part1);
   free(part2);
@@ -1787,7 +1788,7 @@ main(int argc, char **argv)
 	Myargv = argv;
 	getparams(S, argc, argv, args);
 	readfont(args);
-  linealloc();
+	linealloc(S);
 
   wordbreakmode = 0;
   last_was_eol_flag = 0;
@@ -1841,11 +1842,11 @@ main(int argc, char **argv)
         }
 
       if (c=='\n') {
-        printline(args);
+        printline(S, args);
         wordbreakmode = 0;
         }
 
-      else if (addchar(c)) {
+      else if (addchar(S, c)) {
         if (c!=' ') {
           wordbreakmode = (wordbreakmode>=2)?3:1;
           }
@@ -1868,20 +1869,20 @@ main(int argc, char **argv)
 
       else if (c==' ') {
         if (wordbreakmode==2) {
-          splitline(args);
+          splitline(S, args);
           }
         else {
-          printline(args);
+          printline(S, args);
           }
         wordbreakmode = -1;
         }
 
       else {
         if (wordbreakmode>=2) {
-          splitline(args);
+          splitline(S, args);
           }
         else {
-          printline(args);
+          printline(S, args);
           }
         wordbreakmode = (wordbreakmode==3)?1:0;
         char_not_added = 1;
@@ -1891,7 +1892,7 @@ main(int argc, char **argv)
     }
 
   if (outlinelen!=0) {
-    printline(args);
+    printline(S, args);
     }
   return 0;
 }
