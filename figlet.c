@@ -1724,6 +1724,36 @@ get_utf8_char(void)
 		(ch4 << 12) + (ch5 << 6) + ch6;
 }
 
+inchr getinchr(void);
+
+static inchr
+get_HZ_char(void)
+{
+	int ch = Agetchar();
+	if (ch == EOF) {
+		return ch;
+	} else if (hzmode) {
+		ch = (ch << 8) + Agetchar();
+		if (ch == ('}' << 8) + '~') {
+			hzmode = 0;
+			return getinchr();
+		}
+		return ch;
+	} else if (ch == '~') {
+		ch = Agetchar();
+		if (ch == '{') {
+			hzmode = 1;
+			return getinchr();
+		} else if (ch == '~') {
+			return ch;
+		} else {
+			return getinchr();
+		}
+	} else {
+		return ch;
+	}
+}
+
 
 inchr
 getinchr(void)
@@ -1738,31 +1768,8 @@ getinchr(void)
 	case ISO2022: return iso2022();
 	case DBCS: return get_DBCS_char();
 	case UTF8: return get_utf8_char();
-   case HZ:
-     ch = Agetchar();
-     if (ch == EOF) return ch;
-     if (hzmode) {
-       ch = (ch << 8) + Agetchar();
-       if (ch == ('}' << 8) + '~') {
-         hzmode = 0;
-         return getinchr();
-         }
-       return ch;
-       }
-     else if (ch == '~') {
-       ch = Agetchar();
-       if (ch == '{') {
-          hzmode = 1;
-          return getinchr();
-          }
-      else if (ch == '~') {
-        return ch;
-        }
-      else {
-        return getinchr();
-        }
-      }
-     else return ch;
+	case HZ: return get_HZ_char();
+
    case SHIFT_JIS:
      ch = Agetchar();
      if ((ch >= 0x80 && ch <= 0x9F) ||
