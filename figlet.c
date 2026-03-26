@@ -1755,30 +1755,33 @@ get_HZ_char(void)
 }
 
 
+static inchr
+get_jis_char(void)
+{
+	int ch = Agetchar();
+	if ((ch >= 0x80 && ch <= 0x9F) ||
+		(ch >= 0xE0 && ch <= 0xEF))
+	{
+		ch = (ch << 8) + Agetchar();
+	}
+	return ch;
+}
+
+
 inchr
 getinchr(void)
 {
-  int ch;
-
-  if (getinchr_flag) {
-    getinchr_flag = 0;
-    return getinchr_buffer;
-    }
+	if (getinchr_flag) {
+		getinchr_flag = 0;
+		return getinchr_buffer;
+	}
 	switch(encoding) {
 	case ISO2022: return iso2022();
 	case DBCS: return get_DBCS_char();
 	case UTF8: return get_utf8_char();
 	case HZ: return get_HZ_char();
-
-   case SHIFT_JIS:
-     ch = Agetchar();
-     if ((ch >= 0x80 && ch <= 0x9F) ||
-         (ch >= 0xE0 && ch <= 0xEF)) {
-       ch = (ch << 8) + Agetchar();
-       }
-     return ch;
-   default:
-     return 0x80;
+	case SHIFT_JIS: return get_jis_char();
+	default: assert(0);
     }
   }
 
