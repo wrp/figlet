@@ -1675,6 +1675,40 @@ get_DBCS_char(void)
 	return ch;
 }
 
+
+static inchr
+get_utf8_char(void)
+{
+	int ch = Agetchar();
+	assert(EOF < 0x80);
+	if (ch < 0x80) {
+		return ch;
+	}
+	if (ch < 0xC0 || ch > 0xFD) {
+		return 0x0080;  /* illegal first character */
+	}
+	int ch2 = Agetchar() & 0x3F;
+	if (ch < 0xE0) {
+		return ((ch & 0x1F) << 6) + ch2;
+	}
+	int ch3 = Agetchar() & 0x3F;
+	if (ch < 0xF0) {
+		return ((ch & 0x0F) << 12) + (ch2 << 6) + ch3;
+	}
+	int ch4 = Agetchar() & 0x3F;
+	if (ch < 0xF8) {
+		return ((ch & 0x07) << 18) + (ch2 << 12) + (ch3 << 6) + ch4;
+	}
+	int ch5 = Agetchar() & 0x3F;
+	if (ch < 0xFC) {
+		return ((ch & 0x03) << 24) + (ch2 << 18) + (ch3 << 12) +
+			(ch4 << 6) + ch5;
+	}
+	int ch6 = Agetchar() & 0x3F;
+	return ((ch & 0x01) << 30) + (ch2 << 24) + (ch3 << 18) +
+		(ch4 << 12) + (ch5 << 6) + ch6;
+}
+
 /*****************************************************************************
 
   getinchr
@@ -1698,7 +1732,7 @@ get_DBCS_char(void)
 inchr
 getinchr(void)
 {
-  int ch, ch2, ch3, ch4, ch5, ch6;
+  int ch;
 
   if (getinchr_flag) {
     getinchr_flag = 0;
@@ -1708,26 +1742,7 @@ getinchr(void)
 	switch(multibyte) {
 	case 0: return iso2022();
 	case 1: return get_DBCS_char();
-   case 2: /* UTF-8 */
-      ch = Agetchar();
-      if (ch < 0x80) return ch;  /* handles EOF, too */
-      if (ch < 0xC0 || ch > 0xFD)
-        return 0x0080;  /* illegal first character */
-      ch2 = Agetchar() & 0x3F;
-      if (ch < 0xE0) return ((ch & 0x1F) << 6) + ch2;
-      ch3 = Agetchar() & 0x3F;
-      if (ch < 0xF0)
-        return ((ch & 0x0F) << 12) + (ch2 << 6) + ch3;
-      ch4 = Agetchar() & 0x3F;
-      if (ch < 0xF8)
-        return ((ch & 0x07) << 18) + (ch2 << 12) + (ch3 << 6) + ch4;
-      ch5 = Agetchar() & 0x3F;
-      if (ch < 0xFC)
-        return ((ch & 0x03) << 24) + (ch2 << 18) + (ch3 << 12) +
-          (ch4 << 6) + ch5;
-      ch6 = Agetchar() & 0x3F;
-      return ((ch & 0x01) << 30) + (ch2 << 24) + (ch3 << 18) +
-        (ch4 << 12) + (ch5 << 6) + ch6;
+	case 2: return get_utf8_char();
    case 3: /* HZ */
      ch = Agetchar();
      if (ch == EOF) return ch;
