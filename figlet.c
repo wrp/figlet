@@ -153,7 +153,22 @@ struct args {
 	int justification;
 };
 
-int paragraphflag,right2left,multibyte;
+enum {
+	ISO2022,   // ISO 2022 mode (see iso2022 routine)
+	DBCS,      // double-byte mode (0x80-0xFF are first byte of 2)
+	UTF8,      // Unicode UTF-8 mode (1)
+	HZ,        // HZ mode ("~{" starts double-byte mode, "}~" ends it
+	SHIFT_JIS, // 0x80-0x95 and 0xE0-0xEF are first of 2
+} encoding;
+/* (1) for utf-8
+    0x00-0x7F bytes are characters,
+    0x80-0xBF bytes are nonfirst byte of a multibyte character,
+    0xC0-0xFD bytes are first byte of a multibyte character,
+    0xFE-0xFF bytes are errors (all errors return code 0x0080)).
+*/
+
+
+int paragraphflag,right2left;
 int read_from_args(void);
 int (*Agetchar)(void) = getchar;
 
@@ -680,20 +695,20 @@ readcontrol(struct state *S, const char *controlname, const struct args *A)
         skiptoeol(controlfile);
 	new_command(S, 0, 0, 0, 0);
         break;
-      case 'b': /* DBCS input mode */
-        multibyte = 1;
+      case 'b':
+        encoding = DBCS;
         break;
-      case 'u': /* UTF-8 input mode */
-        multibyte = 2;
+      case 'u':
+        encoding = UTF8;
         break;
-      case 'h': /* HZ input mode */
-        multibyte = 3;
+      case 'h':
+        encoding = HZ;
         break;
-      case 'j': /* Shift-JIS input mode */
-        multibyte = 4;
+      case 'j':
+        encoding = SHIFT_JIS;
         break;
       case 'g': /* ISO 2022 character set choices */
-        multibyte = 0;
+        encoding = ISO2022;
         skipws(controlfile);
         command=Zgetc(controlfile);
         switch (command) {
@@ -889,7 +904,7 @@ getparams(struct state *S, int argc, char **argv, struct args *A)
         break;
       case 'N':
         clearcontrols(S);
-        multibyte = 0;
+        encoding = ISO2022;
         gn[0] = 0;
         gn[1] = 0x80;
         gn[2] = gn[3] = 0;
@@ -1709,25 +1724,6 @@ get_utf8_char(void)
 		(ch4 << 12) + (ch5 << 6) + ch6;
 }
 
-/*****************************************************************************
-
-  getinchr
-
-  Called by main.  Processes multibyte characters.  Invokes Agetchar.
-  If multibyte = 0, ISO 2022 mode (see iso2022 routine).
-  If multibyte = 1,  double-byte mode (0x00-0x7f bytes are characters,
-    0x80-0xFF bytes are first byte of a double-byte character).
-  If multibyte = 2, Unicode UTF-8 mode (0x00-0x7F bytes are characters,
-    0x80-0xBF bytes are nonfirst byte of a multibyte character,
-    0xC0-0xFD bytes are first byte of a multibyte character,
-    0xFE-0xFF bytes are errors (all errors return code 0x0080)).
-  If multibyte = 3, HZ mode ("~{" starts double-byte mode, "}~" ends it,
-    "~~" is a tilde, "~x" for all other x is ignored).
-  If multibyte = 4, Shift-JIS mode (0x80-0x9F and 0xE0-0xEF are first byte
-    of a double-byte character, all other bytes are characters).
-
-
-*****************************************************************************/
 
 inchr
 getinchr(void)
@@ -1738,12 +1734,11 @@ getinchr(void)
     getinchr_flag = 0;
     return getinchr_buffer;
     }
-
-	switch(multibyte) {
-	case 0: return iso2022();
-	case 1: return get_DBCS_char();
-	case 2: return get_utf8_char();
-   case 3: /* HZ */
+	switch(encoding) {
+	case ISO2022: return iso2022();
+	case DBCS: return get_DBCS_char();
+	case UTF8: return get_utf8_char();
+   case HZ:
      ch = Agetchar();
      if (ch == EOF) return ch;
      if (hzmode) {
@@ -1768,7 +1763,7 @@ getinchr(void)
         }
       }
      else return ch;
-   case 4: /* Shift-JIS */
+   case SHIFT_JIS:
      ch = Agetchar();
      if ((ch >= 0x80 && ch <= 0x9F) ||
          (ch >= 0xE0 && ch <= 0xEF)) {
