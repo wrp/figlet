@@ -1,4 +1,3 @@
-#ifdef TLF_FONTS
 /*
  * Copyright (c) 2007 Alexey Vatchenko <av@bsdua.org>
  *
@@ -323,4 +322,3 @@ wchar_to_utf8(const wchar_t *in, size_t insize, char *out, size_t outsize,
 
 	return (total);
 }
-#endif /* TLF_FONTS */

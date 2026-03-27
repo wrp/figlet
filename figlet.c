@@ -39,11 +39,9 @@
 #include <sys/ioctl.h> /* Needed for get_columns */
 #endif
 
-#ifdef TLF_FONTS
 #include <wchar.h>
 #include <wctype.h>
 #include "utf8.h"
-#endif
 
 #include "zipio.h"     /* Package for reading compressed files */
 
@@ -60,14 +58,11 @@ Note: '/' also used in filename in get_columns(). */
 #define DEFAULTCOLUMNS 80
 #define MAXLEN 255     /* Maximum character width */
 
-/* Add support for Sam Hocevar's TOIlet fonts */
-#ifdef TLF_FONTS
 #define TOILETFILESUFFIX ".tlf"
 #define TOILETFILEMAGICNUMBER "tlf2"
 #define TSUFFIXLEN strlen(TOILETFILESUFFIX)
 
 int toiletfont;	/* true if font is a TOIlet TLF font */
-#endif
 
 
 typedef long inchr; /* "char" read from stdin */
@@ -102,19 +97,11 @@ static char **Myargv;
 
 ****************************************************************************/
 
-#ifdef TLF_FONTS
 typedef wchar_t outchr; /* "char" written to stdout */
 #define STRLEN(x) wcslen(x)
 #define STRCPY(x,y) wcscpy((x),(y))
 #define STRCAT(x,y) wcscat((x),(y))
 #define ISSPACE(x) iswspace(x)
-#else
-typedef char outchr; /* "char" written to stdout */
-#define STRLEN(x) strlen(x)
-#define STRCPY(x,y) strcpy((x),(y))
-#define STRCAT(x,y) strcat((x),(y))
-#define ISSPACE(x) isspace(x)
-#endif
 
 struct fc {
   inchr ord;
@@ -385,9 +372,7 @@ printinfo(int infonum, const char *name, const struct args *A)
       break;
     case 5: /* Font formats */
       printf("%s", FONTFILEMAGICNUMBER);
-#ifdef TLF_FONTS
       printf(" %s", TOILETFILEMAGICNUMBER);
-#endif
       printf("\n");
     }
 }
@@ -881,11 +866,9 @@ getparams(struct state *S, int argc, char **argv, struct args *A)
         if (suffixcmp(A->fontname,FONTFILESUFFIX)) {
           A->fontname[strlen(A->fontname)-FSUFFIXLEN] = '\0';
           }
-#ifdef TLF_FONTS
         else if (suffixcmp(A->fontname,TOILETFILESUFFIX)) {
           A->fontname[strlen(A->fontname)-TSUFFIXLEN] = '\0';
           }
-#endif
         break;
       case 'C':
         controlname = optarg;
@@ -963,11 +946,7 @@ readfontchar(ZFILE *file, inchr theord)
     if (myfgets(templine,MAXLEN,file)==NULL) {
       templine[0] = '\0';
       }
-#ifdef TLF_FONTS
     utf8_to_wchar(templine,MAXLEN,outline,MAXLEN,0);
-#else
-    strcpy(outline,templine);
-#endif
     k = STRLEN(outline)-1;
     while (k>=0 && ISSPACE(outline[k])) {  /* remove trailing spaces */
       k--;
@@ -1001,12 +980,10 @@ readfont(struct args *A)
   char *end;
 
   fontfile = FIGopen(A->fontname,FONTFILESUFFIX, A);
-#ifdef TLF_FONTS
   if (fontfile==NULL) {
     fontfile = FIGopen(A->fontname,TOILETFILESUFFIX, A);
     if(fontfile) toiletfont = 1;
     }
-#endif
 
 	if (fontfile == NULL) {
 		fprintf(
@@ -1041,12 +1018,8 @@ readfont(struct args *A)
     fprintf(stderr,"%s: character is too wide\n", A->fontname);
     exit(1);
     }
-#ifdef TLF_FONTS
   if ((!toiletfont && strcmp(magicnum,FONTFILEMAGICNUMBER)) ||
       (toiletfont && strcmp(magicnum,TOILETFILEMAGICNUMBER)) || numsread<5) {
-#else
-  if (strcmp(magicnum,FONTFILEMAGICNUMBER) || numsread<5) {
-#endif
     fprintf(stderr,"%s: Not a FIGlet 2 font file\n", A->fontname);
     exit(1);
     }
@@ -1383,7 +1356,6 @@ putstring(outchr *string, const struct args *A)
 		}
 	}
 	for (int i = 0; i < len; i += 1) {
-#ifdef TLF_FONTS
 		char c[10];
 		size_t size;
 		wchar_t wc[2] = {string[i], 0};
@@ -1393,9 +1365,6 @@ putstring(outchr *string, const struct args *A)
 		}
 		c[size] = 0;
 		printf("%s", c);
-#else
-		putchar(string[i] == hardblank ? ' ' : string[i]);
-#endif
 	}
 	putchar('\n');
 }
@@ -1812,9 +1781,7 @@ main(int argc, char **argv)
   wordbreakmode = 0;
   last_was_eol_flag = 0;
 
-#ifdef TLF_FONTS
   toiletfont = 0;
-#endif
 
   while ((c = getinchr())!=EOF) {
 

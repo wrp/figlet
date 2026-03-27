@@ -20,11 +20,6 @@ endif
 
 message('Numeric version: ' + version_int)
 
-if get_option('toilet') == 'enabled'
-	add_project_arguments('-DTLF_FONTS', language: ['c'])
-	message('toilet fonts enabled')
-endif
-
 source_files = ['figlet.c', 'zipio.c', 'crc.c', 'inflate.c', 'utf8.c']
 figlet = executable('figlet', sources: source_files, install: true)
 executable('chkfont', sources: 'chkfont.c', install: true)
