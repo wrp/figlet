@@ -969,20 +969,21 @@ readfontchar(ZFILE *file, inchr theord)
 void
 readfont(struct args *A)
 {
-	int toiletfont = 0; /* true if font is a TOIlet TLF font */
-  int i,row,numsread;
-  inchr theord;
-  int maxlen,cmtlines,ffright2left;
-  int smush,smush2;
-  char fileline[MAXLEN+1],magicnum[5];
-  ZFILE *fontfile;
-  char *end;
+	const char *expected_magic = FONTFILEMAGICNUMBER;
 
-  fontfile = FIGopen(A->fontname,FONTFILESUFFIX, A);
-  if (fontfile==NULL) {
-    fontfile = FIGopen(A->fontname,TOILETFILESUFFIX, A);
-    if(fontfile) toiletfont = 1;
-    }
+	int i,row,numsread;
+	inchr theord;
+	int maxlen,cmtlines,ffright2left;
+	int smush,smush2;
+	char fileline[MAXLEN+1],magicnum[5];
+	ZFILE *fontfile;
+	char *end;
+
+	fontfile = FIGopen(A->fontname,FONTFILESUFFIX, A);
+	if (fontfile == NULL) {
+		fontfile = FIGopen(A->fontname,TOILETFILESUFFIX, A);
+		expected_magic = TOILETFILEMAGICNUMBER;
+	}
 
 	if (fontfile == NULL) {
 		fprintf(
@@ -994,7 +995,12 @@ readfont(struct args *A)
 		exit(1);
 	}
 
-  readmagic(fontfile,magicnum);
+	readmagic(fontfile, magicnum);
+	if (strcmp(magicnum, expected_magic)) {
+		fprintf(stderr,"%s: Not a FIGlet 2 font file\n", A->fontname);
+		exit(1);
+	}
+
 	if ( (end = myfgets(fileline,MAXLEN,fontfile)) == NULL) {
 		fileline[0] = '\0';
 	} else if (end > fileline && end[-1] != '\n') {
@@ -1012,14 +1018,13 @@ readfont(struct args *A)
 		&ffright2left,
 		&smush2
 	);
+	if (numsread < 5) {
+		fprintf(stderr,"%s: Not a FIGlet 2 font file\n", A->fontname);
+		exit(1);
+	}
 
   if (maxlen > MAXLEN) {
     fprintf(stderr,"%s: character is too wide\n", A->fontname);
-    exit(1);
-    }
-  if ((!toiletfont && strcmp(magicnum,FONTFILEMAGICNUMBER)) ||
-      (toiletfont && strcmp(magicnum,TOILETFILEMAGICNUMBER)) || numsread<5) {
-    fprintf(stderr,"%s: Not a FIGlet 2 font file\n", A->fontname);
     exit(1);
     }
   for (i=1;i<=cmtlines;i++) {
