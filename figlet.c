@@ -71,6 +71,11 @@ int toiletfont;	/* true if font is a TOIlet TLF font */
 
 
 typedef long inchr; /* "char" read from stdin */
+static inchr iso2022(void);
+static inchr get_DBCS_char(void);
+static inchr get_utf8_char(void);
+static inchr get_HZ_char(void);
+static inchr get_jis_char(void);
 
 inchr deutsch[7] = {196, 214, 220, 228, 246, 252, 223};
   /* Latin-1 codes for German letters, respectively:
@@ -139,7 +144,8 @@ struct state {
 	inchr *inchrline;
 	int inchrlinelen;
 	int inchrlinelenlimit;
-};
+	inchr (*next_char)(void);
+} *state;
 
 /****************************************************************************
 
@@ -152,20 +158,6 @@ struct args {
 	char *fontname;
 	int justification;
 };
-
-enum {
-	ISO2022,   // ISO 2022 mode (see iso2022 routine)
-	DBCS,      // double-byte mode (0x80-0xFF are first byte of 2)
-	UTF8,      // Unicode UTF-8 mode (1)
-	HZ,        // HZ mode ("~{" starts double-byte mode, "}~" ends it
-	SHIFT_JIS, // 0x80-0x95 and 0xE0-0xEF are first of 2
-} encoding;
-/* (1) for utf-8
-    0x00-0x7F bytes are characters,
-    0x80-0xBF bytes are nonfirst byte of a multibyte character,
-    0xC0-0xFD bytes are first byte of a multibyte character,
-    0xFE-0xFF bytes are errors (all errors return code 0x0080)).
-*/
 
 
 int paragraphflag,right2left;
@@ -696,19 +688,19 @@ readcontrol(struct state *S, const char *controlname, const struct args *A)
 	new_command(S, 0, 0, 0, 0);
         break;
       case 'b':
-        encoding = DBCS;
+	state->next_char = get_DBCS_char;
         break;
       case 'u':
-        encoding = UTF8;
+	state->next_char = get_utf8_char;
         break;
       case 'h':
-        encoding = HZ;
+	state->next_char = get_HZ_char;
         break;
       case 'j':
-        encoding = SHIFT_JIS;
+	state->next_char = get_jis_char;
         break;
       case 'g': /* ISO 2022 character set choices */
-        encoding = ISO2022;
+	state->next_char = iso2022;
         skipws(controlfile);
         command=Zgetc(controlfile);
         switch (command) {
@@ -904,7 +896,7 @@ getparams(struct state *S, int argc, char **argv, struct args *A)
         break;
       case 'N':
         clearcontrols(S);
-        encoding = ISO2022;
+	state->next_char = iso2022;
         gn[0] = 0;
         gn[1] = 0x80;
         gn[2] = gn[3] = 0;
@@ -1518,15 +1510,10 @@ read_from_args(void)
 	return c;
 }
 
-/****************************************************************************
-
-  iso2022
-
-  Called by getinchr.  Interprets ISO 2022 sequences
-
-******************************************************************************/
-
-inchr iso2022()
+/*
+ * Interpret ISO 2022 sequences
+ */
+inchr iso2022(void)
 {
   inchr ch;
   inchr ch2;
@@ -1678,6 +1665,10 @@ ungetinchr(inchr c)
 }
 
 
+/*
+ * Read character in double-byte mode.
+ * 0x80-0xFF are first byte of 2 byte sequence.
+ */
 static inchr
 get_DBCS_char(void)
 {
@@ -1691,6 +1682,13 @@ get_DBCS_char(void)
 }
 
 
+/*
+ * Read character in Unicode UTF-8 mode
+ * 0x00-0x7F bytes are characters,
+ * 0x80-0xBF bytes are nonfirst byte of a multibyte character,
+ * 0xC0-0xFD bytes are first byte of a multibyte character,
+ * 0xFE-0xFF bytes are errors (all errors return code 0x0080).
+ */
 static inchr
 get_utf8_char(void)
 {
@@ -1725,7 +1723,9 @@ get_utf8_char(void)
 }
 
 inchr getinchr(void);
-
+/*
+ * Read a character in HZ mode ("~{" starts double-byte mode, "}~" ends it
+ */
 static inchr
 get_HZ_char(void)
 {
@@ -1755,6 +1755,10 @@ get_HZ_char(void)
 }
 
 
+/*
+ * Read a character in SHIFT_JIS mode
+ * 0x80-0x95 and 0xE0-0xEF are first byte of a 2 byte sequence
+ */
 static inchr
 get_jis_char(void)
 {
@@ -1775,16 +1779,8 @@ getinchr(void)
 		getinchr_flag = 0;
 		return getinchr_buffer;
 	}
-	switch(encoding) {
-	case ISO2022: return iso2022();
-	case DBCS: return get_DBCS_char();
-	case UTF8: return get_utf8_char();
-	case HZ: return get_HZ_char();
-	case SHIFT_JIS: return get_jis_char();
-	default: assert(0);
-    }
-  }
-
+	return state->next_char();
+}
 
 /*
  * Read characters 1 by 1 from stdin, and make lines out of them using
@@ -1795,6 +1791,8 @@ int
 main(int argc, char **argv)
 {
 	struct state S[1];
+	state = S;
+	S->next_char = iso2022;
 	struct args args[1] = {{0}};
 	inchr c,c2;
 	int i;
