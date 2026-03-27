@@ -62,8 +62,6 @@ Note: '/' also used in filename in get_columns(). */
 #define TOILETFILEMAGICNUMBER "tlf2"
 #define TSUFFIXLEN strlen(TOILETFILESUFFIX)
 
-int toiletfont;	/* true if font is a TOIlet TLF font */
-
 
 typedef long inchr; /* "char" read from stdin */
 static inchr iso2022(void);
@@ -971,6 +969,7 @@ readfontchar(ZFILE *file, inchr theord)
 void
 readfont(struct args *A)
 {
+	int toiletfont = 0; /* true if font is a TOIlet TLF font */
   int i,row,numsread;
   inchr theord;
   int maxlen,cmtlines,ffright2left;
@@ -1780,8 +1779,6 @@ main(int argc, char **argv)
 
   wordbreakmode = 0;
   last_was_eol_flag = 0;
-
-  toiletfont = 0;
 
   while ((c = getinchr())!=EOF) {
 
