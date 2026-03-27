@@ -979,6 +979,7 @@ readfontchar(ZFILE *file, inchr theord)
         }
       }
     outline[k+1] = '\0';
+    assert(STRLEN(outline) == k + 1);
     fcharlist->thechar[row] = (outchr*)myalloc(sizeof(outchr)*(STRLEN(outline)+1));
     STRCPY(fcharlist->thechar[row],outline);
     }
