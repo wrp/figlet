@@ -13,8 +13,6 @@
  *       archive files that will be searched for fonts.
  */
 
-#define DATE "31 May 2012"
-
 /* FIGlet (Frank, Ian & Glenn's Letters) */
 
 #ifndef DEFAULTFONTDIR
@@ -346,7 +344,7 @@ printinfo(int infonum, const char *name, const struct args *A)
       printf("FIGlet Copyright (C) 1991-2012 Glenn Chappell, Ian Chai, ");
       printf("John Cowan,\nChristiaan Keet and Claudio Matsuoka\n");
       printf("Internet: <info@figlet.org> ");
-      printf("Version: %s, date: %s\n\n",VERSION,DATE);
+      printf("Version: %s, date: %s\n\n",VERSION,__DATE__);
       printf("FIGlet, along with the various FIGlet fonts");
       printf(" and documentation, may be\n");
       printf("freely copied and distributed.\n\n");
